@@ -1,228 +1,401 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { Row, Col, Image, ListGroup, Button, Card, Form } from 'react-bootstrap'
-import Rating from '../components/Rating'
-import Loader from '../components/Loader'
-import Message from '../components/Message'
-import { listProductDetails, createProductReview } from '../actions/productActions'
-import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'
+import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { listProductDetails, createProductReview } from '../actions/productActions';
+import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants';
+import Rating from '../components/Rating';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { ReactComponent as ChevronRight } from '../images/Chevronright.svg';
+import { ReactComponent as ChevronLeft } from '../images/chevronleft.svg';
+import { ReactComponent as ArrowUp } from '../images/arrowup.svg';
+import { ReactComponent as ArrowDown } from '../images/arrowdown.svg';
+import { ReactComponent as DeliveryIcon } from '../images/icon-delivery.svg';
+import { ReactComponent as ReturnIcon } from '../images/Icon-return.svg';
+import { addToCart, removeFromCart } from '../actions/cartActions';
 
 function ProductScreen({ match, history }) {
-    const [qty, setQty] = useState(1)
-    const [rating, setRating] = useState(0)
-    const [comment, setComment] = useState('')
+    const [qty, setQty] = useState(1);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [mainImage, setMainImage] = useState('');
+    const [selectedColor, setSelectedColor] = useState('');
+    const [selectedSize, setSelectedSize] = useState('');
 
-    const dispatch = useDispatch()
+    const thumbnailsRef = useRef(null);
 
-    const productDetails = useSelector(state => state.productDetails)
-    const { loading, error, product } = productDetails
+    const dispatch = useDispatch();
 
-    const userLogin = useSelector(state => state.userLogin)
-    const { userInfo } = userLogin
+    const productDetails = useSelector((state) => state.productDetails);
+    const { loading, error, product } = productDetails;
 
-    const productReviewCreate = useSelector(state => state.productReviewCreate)
+    const userLogin = useSelector((state) => state.userLogin);
+    const { userInfo } = userLogin;
+
+    const productReviewCreate = useSelector((state) => state.productReviewCreate);
     const {
         loading: loadingProductReview,
         error: errorProductReview,
         success: successProductReview,
-    } = productReviewCreate
-
+    } = productReviewCreate;
+    const scrollThumbnails = (direction, isHorizontal = false) => {
+        if (thumbnailsRef.current) {
+            thumbnailsRef.current.scrollBy({
+                left: isHorizontal ? direction * 100 : 0,
+                top: isHorizontal ? 0 : direction * 100,
+                behavior: 'smooth'
+            });
+        }
+    };
+    // useEffect(() => {
+    //     if (match.params.id) {
+    //         dispatch(addToCart(match.params.id, qty));
+    //     }
+    // }, [dispatch, match.params.id, qty]);
     useEffect(() => {
         if (successProductReview) {
-            setRating(0)
-            setComment('')
-            dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
+            setRating(0);
+            setComment('');
+            dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
         }
 
-        dispatch(listProductDetails(match.params.id))
+        dispatch(listProductDetails(match.params.id));
+    }, [dispatch, match, successProductReview]);
 
-    }, [dispatch, match, successProductReview])
+    useEffect(() => {
+        if (product.image) {
+            setMainImage(product.image);
+        }
+    }, [product]);
 
     const addToCartHandler = () => {
-        history.push(`/cart/${match.params.id}?qty=${qty}`)
-    }
+        //const queryParams = `qty=${qty}&color=${selectedColor}&size=${selectedSize}`;
+        history.push('/cart');
+        dispatch(addToCart(match.params.id, qty, selectedColor, selectedSize));
+        console.log(match.params.id,'match id')
+        console.log(`Selected Color: ${selectedColor}, Selected Size: ${selectedSize}`,match.params.id);
+    };
+    
+    
 
     const submitHandler = (e) => {
-        e.preventDefault()
-        dispatch(createProductReview(
-            match.params.id, {
-            rating,
-            comment
+        e.preventDefault();
+        dispatch(
+            createProductReview(match.params.id, {
+                rating,
+                comment,
+            })
+        );
+    };
+
+    const incrementQty = () => {
+        if (qty < product.countInStock) {
+            setQty(qty + 1);
         }
-        ))
-    }
+    };
+
+    const decrementQty = () => {
+        if (qty > 1) {
+            setQty(qty - 1);
+        }
+    };
+
+    const handleColorClick = (color) => {
+        if (color === selectedColor) {
+            setSelectedColor('');
+        } else {
+            setSelectedColor(color);
+        }
+    };
+
+    const handleSizeClick = (size) => {
+        if (size === selectedSize) {
+            setSelectedSize('');
+        } else {
+            setSelectedSize(size);
+        }
+    };
+
+    const renderColorVariations = (colors) => {
+        return (
+            <div className='flex items-center gap-3'>
+                <span className='font-[800] text-lg'>Color: </span>
+                <div className="flex gap-2">
+                    {colors.map((color, index) => (
+                        <button
+                            key={index}
+                            className={`h-4 w-4 rounded-full ${selectedColor === color ? 'border-2 border-blue-500' : ''}`}
+                            style={{ backgroundColor: color }}
+                            onClick={() => handleColorClick(color)}
+                        ></button>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
+    const renderSizeVariations = (sizes) => {
+        return (
+            <div className='flex items-center gap-3'>
+                <span className='font-[900] text-lg'>Size: </span>
+                <div className="size-variation flex gap-2">
+                    {sizes.map((size, index) => (
+                        <button
+                            key={index}
+                            className={`size-box ${selectedSize === size ? 'bg-blue-500 text-white' : ''}`}
+                            onClick={() => handleSizeClick(size)}
+                        >
+                            {size}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
+    const renderOtherVariations = (variations, type) => {
+        return (
+            <div key={type} className='flex items-center gap-3'>
+                <span className='font-[900] text-lg'>{type}: </span>
+                <div className="variation flex gap-2">
+                    {variations.map((variation, index) => (
+                        <button
+                            key={index}
+                            className="variation-box"
+                            onClick={() => console.log(`${type}: ${variation}`)}
+                        >
+                            {variation}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     return (
-        <div>
-            <Link to='/' className='btn btn-light my-3'>Go Back</Link>
-            {loading ?
+        <div className="container mx-auto p-4">
+            <Link to='/' className='btn btn-light my-3'>
+                Go Back
+            </Link>
+            {loading ? (
                 <Loader />
-                : error
-                    ? <Message variant='danger'>{error}</Message>
-                    : (
-                        <div>
-                            <Row>
-                                <Col md={6}>
-                                    <Image src={product.image} alt={product.name} fluid />
-                                </Col>
-
-
-                                <Col md={3}>
-                                    <ListGroup variant="flush">
-                                        <ListGroup.Item>
-                                            <h3>{product.name}</h3>
-                                        </ListGroup.Item>
-
-                                        <ListGroup.Item>
-                                            <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#f8e825'} />
-                                        </ListGroup.Item>
-
-                                        <ListGroup.Item>
-                                            Price: ${product.price}
-                                        </ListGroup.Item>
-
-                                        <ListGroup.Item>
-                                            Description: {product.description}
-                                        </ListGroup.Item>
-                                    </ListGroup>
-                                </Col>
-
-
-                                <Col md={3}>
-                                    <Card>
-                                        <ListGroup variant='flush'>
-                                            <ListGroup.Item>
-                                                <Row>
-                                                    <Col>Price:</Col>
-                                                    <Col>
-                                                        <strong>${product.price}</strong>
-                                                    </Col>
-                                                </Row>
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                <Row>
-                                                    <Col>Status:</Col>
-                                                    <Col>
-                                                        {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
-                                                    </Col>
-                                                </Row>
-                                            </ListGroup.Item>
-
-                                            {product.countInStock > 0 && (
-                                                <ListGroup.Item>
-                                                    <Row>
-                                                        <Col>Qty</Col>
-                                                        <Col xs='auto' className='my-1'>
-                                                            <Form.Control
-                                                                as="select"
-                                                                value={qty}
-                                                                onChange={(e) => setQty(e.target.value)}
-                                                            >
-                                                                {
-
-                                                                    [...Array(product.countInStock).keys()].map((x) => (
-                                                                        <option key={x + 1} value={x + 1}>
-                                                                            {x + 1}
-                                                                        </option>
-                                                                    ))
-                                                                }
-
-                                                            </Form.Control>
-                                                        </Col>
-                                                    </Row>
-                                                </ListGroup.Item>
-                                            )}
-
-
-                                            <ListGroup.Item>
-                                                <Button
-                                                    onClick={addToCartHandler}
-                                                    className='btn-block'
-                                                    disabled={product.countInStock == 0}
-                                                    type='button'>
-                                                    Add to Cart
-                                                </Button>
-                                            </ListGroup.Item>
-                                        </ListGroup>
-                                    </Card>
-                                </Col>
-                            </Row>
-
-                            <Row>
-                                <Col md={6}>
-                                    <h4>Reviews</h4>
-                                    {product.reviews.length === 0 && <Message variant='info'>No Reviews</Message>}
-
-                                    <ListGroup variant='flush'>
-                                        {product.reviews.map((review) => (
-                                            <ListGroup.Item key={review._id}>
-                                                <strong>{review.name}</strong>
-                                                <Rating value={review.rating} color='#f8e825' />
-                                                <p>{review.createdAt.substring(0, 10)}</p>
-                                                <p>{review.comment}</p>
-                                            </ListGroup.Item>
-                                        ))}
-
-                                        <ListGroup.Item>
-                                            <h4>Write a review</h4>
-
-                                            {loadingProductReview && <Loader />}
-                                            {successProductReview && <Message variant='success'>Review Submitted</Message>}
-                                            {errorProductReview && <Message variant='danger'>{errorProductReview}</Message>}
-
-                                            {userInfo ? (
-                                                <Form onSubmit={submitHandler}>
-                                                    <Form.Group controlId='rating'>
-                                                        <Form.Label>Rating</Form.Label>
-                                                        <Form.Control
-                                                            as='select'
-                                                            value={rating}
-                                                            onChange={(e) => setRating(e.target.value)}
-                                                        >
-                                                            <option value=''>Select...</option>
-                                                            <option value='1'>1 - Poor</option>
-                                                            <option value='2'>2 - Fair</option>
-                                                            <option value='3'>3 - Good</option>
-                                                            <option value='4'>4 - Very Good</option>
-                                                            <option value='5'>5 - Excellent</option>
-                                                        </Form.Control>
-                                                    </Form.Group>
-
-                                                    <Form.Group controlId='comment'>
-                                                        <Form.Label>Review</Form.Label>
-                                                        <Form.Control
-                                                            as='textarea'
-                                                            row='5'
-                                                            value={comment}
-                                                            onChange={(e) => setComment(e.target.value)}
-                                                        ></Form.Control>
-                                                    </Form.Group>
-
-                                                    <Button
-                                                        disabled={loadingProductReview}
-                                                        type='submit'
-                                                        variant='primary'
-                                                    >
-                                                        Submit
-                                                    </Button>
-
-                                                </Form>
-                                            ) : (
-                                                    <Message variant='info'>Please <Link to='/login'>login</Link> to write a review</Message>
-                                                )}
-                                        </ListGroup.Item>
-                                    </ListGroup>
-                                </Col>
-                            </Row>
+            ) : error ? (
+                <Message variant='danger'>{error}</Message>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Images Section */}
+                    <div className="flex flex-col md:flex-row md:gap-4 h-full relative">
+                        {/* Thumbnails and Arrow Section */}
+                        <div className="md:hidden sm:flex flex justify-center w-full h-full rounded-sm bg-[#fafafa]">
+                            <img
+                                src={mainImage}
+                                alt={product.name}
+                                className="object-contain max-h-full max-w-full"
+                                style={{ backgroundColor: 'transparent', mixBlendMode: 'multiply' }}
+                            />
                         </div>
-                    )
+                        <div className='flex flex-col items-center justify-center'>
+                            <button
+                                onClick={() => scrollThumbnails(-1)}
+                                className="flex items-center justify-center"
+                            >
+                                <ArrowUp className="h-6 w-6 text-gray-600 hidden md:block" />
+                            </button>
+                            <button
+                                onClick={() => scrollThumbnails(-1, true)}
+                                className="absolute -left-8 bottom-12 z-10 p-1 sm:block md:hidden"
+                            >
+                                <ChevronLeft/>
+                            </button>
+                            <button
+                                onClick={() => scrollThumbnails(1)}
+                                className="flex items-center justify-center"
+                            >
+                                <ArrowDown className="h-6 w-6 text-gray-600 hidden  md:block" />
+                            </button>
+                            <button
+                                onClick={() => scrollThumbnails(1, true)}
+                                className="absolute -right-8  bottom-12 z-10 p-1 sm:block md:hidden"
+                            >
+                                <ChevronRight/>
+                            </button>
+                        </div>
+                        <div className="flex md:flex-col items-center gap-3 md:justify-center relative md:order-1">
+                            <div className="md:flex flex-col items-center justify-center">
+                                <div
+                                    className="flex md:flex-col items-center overflow-hidden h-32 md:h-full"
+                                    ref={thumbnailsRef}
+                                    style={{ overflow: 'hidden' }}
+                                >
+                                    {[{ image: product.image }, ...(product.thumbnails || [])].map(
+                                        (thumbnail, index) => (
+                                            <img
+                                                key={index}
+                                                src={thumbnail.image || thumbnail}
+                                                alt={product.name}
+                                                className={`cursor-pointer h-28 w-32 rounded-sm object-cover mb-2 p-3 ${
+                                                    mainImage === (thumbnail.image || thumbnail)
+                                                        ? 'border-2 border-blue-500'
+                                                        : ''
+                                                }`}
+                                                onClick={() => setMainImage(thumbnail.image || thumbnail)}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    mixBlendMode: 'multiply',
+                                                    background: '#fafafa',
+                                                }}
+                                            />
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="relative flex items-center justify-center w-full h-full md:order-2">
+                            <div className="hidden md:flex justify-center w-full h-full rounded-sm bg-[#fafafa]">
+                                <img
+                                    src={mainImage}
+                                    alt={product.name}
+                                    className="object-contain max-h-full max-w-full"
+                                    style={{ backgroundColor: 'transparent', mixBlendMode: 'multiply' }}
+                                />
+                            </div>
+                        </div>
+                    </div>
 
-            }
+                    {/* Product Details */}
+                    <div className="col-span-1">
+                        <ul className="space-y-4">
+                            <li>
+                                <h3 className="text-2xl font-bold">{product.name}</h3>
+                            </li>
+                            <li>
+                                <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#FFAD33'} />
+                            </li>
+                            <li className="text-xl">Price: ${product.price}</li>
+                            <li className="text-gray-700 pb-3 border-b border-gray-400">Description: {product.description}</li>
+                            <div>
+                                {product?.variations?.Color && renderColorVariations(product?.variations?.Color)}
+                                {product?.variations?.Size && renderSizeVariations(product?.variations?.Size)}
+                                {Object.keys(product?.variations || {}).map(variationType => {
+                                    if (variationType === 'Color' || variationType === 'Size') return null;
+                                    return renderOtherVariations(product.variations[variationType], variationType);
+                                })}
+                            </div>
+                            <li>
+                                <span
+                                    className={`text-lg font-semibold ${
+                                        product.countInStock > 0 ? 'text-green-500' : 'text-red-500'
+                                    }`}
+                                >
+                                    {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
+                                </span>
+                            </li>
+                            {product.countInStock > 0 && (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center border rounded">
+                                        <button
+                                            onClick={decrementQty}
+                                            className="px-3 py-2 font-bold hover:text-white hover:bg-red-500 border-r focus:outline-none"
+                                        >
+                                            -
+                                        </button>
+                                        <span className="px-4 font-bold py-2">{qty}</span>
+                                        <button
+                                            onClick={incrementQty}
+                                            className="px-3 py-2 font-bold hover:text-white hover:bg-red-500 border-l focus:outline-none"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    <button
+                                        className="bg-red-500 text-white px-4 py-2 rounded"
+                                        onClick={addToCartHandler}
+                                        disabled={product.countInStock === 0}
+                                    >
+                                        Buy Now
+                                    </button>
+                                </div>
+                            )}
+                            <ul className='border border-red-600 rounded-md my-3'>
+                                <li className='border-b '>
+                                    <div className='flex items-center gap-4 p-3'>
+                                        <DeliveryIcon/>
+                                        <div>
+                                            <p className='text-base font-semibold'>Free Delivery</p>
+                                            <p className='text-sm'>Enter your postal code for Delivery Availability</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li className=' flex items-center gap-4 p-3'>
+                                    <ReturnIcon/>
+                                    <div>
+                                        <p className='text-base font-semibold'>Free Delivery</p>
+                                        <p className='text-sm'>Enter your postal code for Delivery Availability</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </ul>
+                    </div>
+                </div>
+            )}
 
-
-        </div >
-    )
+            <div className="mt-8">
+                <h4 className="text-xl font-semibold">Reviews</h4>
+                {product.reviews.length === 0 && <Message variant='info'>No Reviews</Message>}
+                <ul className="space-y-4">
+                    {product.reviews.map((review) => (
+                        <li key={review._id} className="border-b pb-4">
+                            <strong>{review.name}</strong>
+                            <Rating value={review.rating} color='#f8e825' />
+                            <p>{review.createdAt.substring(0, 10)}</p>
+                            <p>{review.comment}</p>
+                        </li>
+                    ))}
+                    <li>
+                        <h4 className="text-lg font-semibold">Write a review</h4>
+                        {loadingProductReview && <Loader />}
+                        {successProductReview && <Message variant='success'>Review Submitted</Message>}
+                        {errorProductReview && <Message variant='danger'>{errorProductReview}</Message>}
+                        {userInfo ? (
+                            <form onSubmit={submitHandler}>
+                                <div className="mb-4">
+                                    <label htmlFor="rating">Rating</label>
+                                    <select
+                                        id="rating"
+                                        value={rating}
+                                        onChange={(e) => setRating(e.target.value)}
+                                        className="block w-full mt-1 p-2 border rounded"
+                                    >
+                                        <option value="">Select...</option>
+                                        <option value="1">1 - Poor</option>
+                                        <option value="2">2 - Fair</option>
+                                        <option value="3">3 - Good</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="5">5 - Excellent</option>
+                                    </select>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="comment">Comment</label>
+                                    <textarea
+                                        id="comment"
+                                        rows="3"
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className="block w-full mt-1 p-2 border rounded"
+                                    ></textarea>
+                                </div>
+                                <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded">
+                                    Submit
+                                </button>
+                            </form>
+                        ) : (
+                            <Message variant='info'>Please <Link to='/login'>sign in</Link> to write a review</Message>
+                        )}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    );
 }
 
-export default ProductScreen
+export default ProductScreen;

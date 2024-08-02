@@ -29,6 +29,16 @@ import {
     PRODUCT_TOP_SUCCESS,
     PRODUCT_TOP_FAIL,
 
+
+        PRODUCT_LIST_BY_SUBCATEGORY_REQUEST,
+        PRODUCT_LIST_BY_SUBCATEGORY_SUCCESS,
+        PRODUCT_LIST_BY_SUBCATEGORY_FAIL,
+
+        SPECIAL_OFFER_LIST_REQUEST,
+        SPECIAL_OFFER_LIST_SUCCESS,
+        SPECIAL_OFFER_LIST_FAIL,
+    
+
 } from '../constants/productConstants'
 
 
@@ -259,3 +269,41 @@ export const createProductReview = (productId, review) => async (dispatch, getSt
         })
     }
 }
+export const listProductsBySubcategory = (subcategoryId) => async (dispatch) => {
+    try {
+        dispatch({ type: PRODUCT_LIST_BY_SUBCATEGORY_REQUEST });
+
+        const { data } = await axios.get(`/api/categories/subcategories/${subcategoryId}/products/`);
+        dispatch({
+            type: PRODUCT_LIST_BY_SUBCATEGORY_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        dispatch({
+            type: PRODUCT_LIST_BY_SUBCATEGORY_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        });
+    }
+};
+
+export const listSpecialOffers = () => async (dispatch) => {
+    try {
+        dispatch({ type: SPECIAL_OFFER_LIST_REQUEST });
+
+        const { data } = await axios.get('/api/special-offers/');
+
+        dispatch({
+            type: SPECIAL_OFFER_LIST_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        dispatch({
+            type: SPECIAL_OFFER_LIST_FAIL,
+            payload: error.response && error.response.data.detail
+                ? error.response.data.detail
+                : error.message,
+        });
+    }
+};

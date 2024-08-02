@@ -200,6 +200,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 #AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
 #AWS_STORAGE_BUCKET_NAME = 'my shop bucket name'
+# settings.py
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 if os.getcwd() == '/app':

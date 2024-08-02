@@ -14,14 +14,52 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
 }
+.thumbnail-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.thumbnail-container .chevron {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.thumbnail-container .chevron.left {
+  left: 0;
+}
+
+.thumbnail-container .chevron.right {
+  right: 0;
+}
+
+.thumbnail-container .thumbnails {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.thumbnail-container .thumbnail {
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.thumbnail-container .thumbnail.active {
+  border-color: red;
+}
+
 
 main{
     min-height: 80vh;
 }
 
-a{
+/* a{
   text-decoration: none;
-}
+} */
 h1{
   font-size: 1.8rem;
   padding:1rem 0;
@@ -33,9 +71,9 @@ h2{
   padding:0.5rem 0;
 }
 
-h3{
+/* h3{
     padding:1rem 0;
-}
+} */
 
 .rating span{
   margin:0.1rem;

@@ -24,7 +24,7 @@ function ProductCarousel() {
     ) : error ? (
         <Message variant="danger">{error}</Message>
     ) : (
-        <Carousel className="bg-[#000] px-4 my-4 w-full" indicators={false} controls={true} interval={3000}>
+        <Carousel className="bg-[#000] px-4 my-4 w-full relative z-10" indicators={false} controls={true} interval={3000}>
         <Carousel.Item>
             <div className="flex flex-col md:flex-row justify-center items-center mx-auto w-full md:w-[85%]">
                 <div className='flex flex-col items-start justify-center md:w-1/2 p-4'>

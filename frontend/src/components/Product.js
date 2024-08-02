@@ -12,7 +12,7 @@ function Product({ product }) {
                     <img
                         src={product.image}
                         alt={product.name}
-                        className="object-cover w-[300px] h-[180px] md:h-[220px]"
+                        className="object-cover w-[280px] h-[180px] md:h-[180px]"
                         style={{ mixBlendMode: 'multiply', backgroundColor: '#F5F5F5' }}
                     />
                     {product.discount && (

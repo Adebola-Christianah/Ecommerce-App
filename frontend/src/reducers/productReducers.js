@@ -29,6 +29,14 @@ import {
     PRODUCT_TOP_REQUEST,
     PRODUCT_TOP_SUCCESS,
     PRODUCT_TOP_FAIL,
+
+    PRODUCT_LIST_BY_SUBCATEGORY_REQUEST,
+    PRODUCT_LIST_BY_SUBCATEGORY_SUCCESS,
+    PRODUCT_LIST_BY_SUBCATEGORY_FAIL,
+
+    SPECIAL_OFFER_LIST_REQUEST,
+    SPECIAL_OFFER_LIST_SUCCESS,
+    SPECIAL_OFFER_LIST_FAIL,
 } from '../constants/productConstants'
 
 
@@ -167,3 +175,37 @@ export const productTopRatedReducer = (state = { products: [] }, action) => {
     }
 }
 
+export const productListBySubcategoryReducer = (state = { products: [] }, action) => {
+    switch (action.type) {
+        case PRODUCT_LIST_BY_SUBCATEGORY_REQUEST:
+            return { loading: true, products: [] };
+        case PRODUCT_LIST_BY_SUBCATEGORY_SUCCESS:
+            return {
+                loading: false,
+                products: action.payload,
+            };
+        case PRODUCT_LIST_BY_SUBCATEGORY_FAIL:
+            return { loading: false, error: action.payload };
+        default:
+            return state;
+    }
+};
+
+export const specialOfferListReducer = (state = { offers: [] }, action) => {
+    switch (action.type) {
+        case SPECIAL_OFFER_LIST_REQUEST:
+            return { loading: true, offers: [] };
+
+        case SPECIAL_OFFER_LIST_SUCCESS:
+            return {
+                loading: false,
+                offers: action.payload, // Assuming action.payload is an array of offers
+            };
+
+        case SPECIAL_OFFER_LIST_FAIL:
+            return { loading: false, error: action.payload };
+
+        default:
+            return state;
+    }
+};
