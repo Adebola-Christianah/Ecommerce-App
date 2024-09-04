@@ -13,3 +13,7 @@ div{
 .section2{
     background-color: green;
 }
+/* styles.css */
+a {
+    text-decoration: none; /* Removes the underline */
+}

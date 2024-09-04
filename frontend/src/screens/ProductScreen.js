@@ -67,7 +67,7 @@ function ProductScreen({ match, history }) {
             setMainImage(product.image);
         }
     }, [product]);
-
+    console.log(product)
     const addToCartHandler = () => {
         //const queryParams = `qty=${qty}&color=${selectedColor}&size=${selectedSize}`;
         history.push('/cart');
@@ -173,7 +173,7 @@ function ProductScreen({ match, history }) {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto ">
             <Link to='/' className='btn btn-light my-3'>
                 Go Back
             </Link>
@@ -182,7 +182,7 @@ function ProductScreen({ match, history }) {
             ) : error ? (
                 <Message variant='danger'>{error}</Message>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-4 rounded-md">
                     {/* Images Section */}
                     <div className="flex flex-col md:flex-row md:gap-4 h-full relative">
                         {/* Thumbnails and Arrow Section */}
@@ -194,7 +194,8 @@ function ProductScreen({ match, history }) {
                                 style={{ backgroundColor: 'transparent', mixBlendMode: 'multiply' }}
                             />
                         </div>
-                        <div className='flex flex-col items-center justify-center'>
+                        
+                        <div className='flex flex-col  justify-center'>
                             <button
                                 onClick={() => scrollThumbnails(-1)}
                                 className="flex items-center justify-center"
@@ -220,10 +221,10 @@ function ProductScreen({ match, history }) {
                                 <ChevronRight/>
                             </button>
                         </div>
-                        <div className="flex md:flex-col items-center gap-3 md:justify-center relative md:order-1">
+                        <div className="flex md:flex-col items-center gap-3  relative md:order-1">
                             <div className="md:flex flex-col items-center justify-center">
                                 <div
-                                    className="flex md:flex-col items-center overflow-hidden h-32 md:h-full"
+                                    className="flex md:flex-col items-center overflow-hidden h-32 md:h-[24rem]"
                                     ref={thumbnailsRef}
                                     style={{ overflow: 'hidden' }}
                                 >
@@ -233,7 +234,7 @@ function ProductScreen({ match, history }) {
                                                 key={index}
                                                 src={thumbnail.image || thumbnail}
                                                 alt={product.name}
-                                                className={`cursor-pointer h-28 w-32 rounded-sm object-cover mb-2 p-3 ${
+                                                className={`cursor-pointer h-28 w-32  object-contain mb-3 border p-2 rounded-md  ${
                                                     mainImage === (thumbnail.image || thumbnail)
                                                         ? 'border-2 border-blue-500'
                                                         : ''
@@ -242,7 +243,7 @@ function ProductScreen({ match, history }) {
                                                 style={{
                                                     backgroundColor: 'transparent',
                                                     mixBlendMode: 'multiply',
-                                                    background: '#fafafa',
+                                                    // background: '#fafafa',
                                                 }}
                                             />
                                         )
@@ -250,7 +251,7 @@ function ProductScreen({ match, history }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="relative flex items-center justify-center w-full h-full md:order-2">
+                        <div className="relative flex items-center justify-center w-full h-[24rem] md:order-2">
                             <div className="hidden md:flex justify-center w-full h-full rounded-sm bg-[#fafafa]">
                                 <img
                                     src={mainImage}
@@ -268,6 +269,13 @@ function ProductScreen({ match, history }) {
                             <li>
                                 <h3 className="text-2xl font-bold">{product.name}</h3>
                             </li>
+                            {product.brands && product.brands.length > 0 && (
+            <li>
+                <span className="font-semibold">Brand:</span>
+                <span className="ml-2">{product.brands[0].name}</span> {/* Added margin for gap */}
+            </li>
+        )}
+
                             <li>
                                 <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#FFAD33'} />
                             </li>
@@ -290,6 +298,7 @@ function ProductScreen({ match, history }) {
                                     {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
                                 </span>
                             </li>
+              
                             {product.countInStock > 0 && (
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center border rounded">
@@ -316,6 +325,19 @@ function ProductScreen({ match, history }) {
                                     </button>
                                 </div>
                             )}
+                                          {product.specifications && product.specifications.length > 0 && (
+            <li>
+               
+                <ul className="">
+                    {product.specifications.map(spec => (
+                        <li key={spec.id} className="flex items-center my-3">
+                            <span className="font-bold strong text-base mr-4">{spec.title}</span> {/* Added margin for gap */}
+                            <span className='text-sm'>{spec.value}</span> {/* Removed semicolon */}
+                        </li>
+                    ))}
+                </ul>
+            </li>
+        )}
                             <ul className='border border-red-600 rounded-md my-3'>
                                 <li className='border-b '>
                                     <div className='flex items-center gap-4 p-3'>
@@ -339,7 +361,7 @@ function ProductScreen({ match, history }) {
                 </div>
             )}
 
-            <div className="mt-8">
+            <div className="mt-8 bg-white p-4 rounded-md">
                 <h4 className="text-xl font-semibold">Reviews</h4>
                 {product.reviews.length === 0 && <Message variant='info'>No Reviews</Message>}
                 <ul className="space-y-4">

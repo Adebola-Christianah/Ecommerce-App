@@ -2,8 +2,9 @@ from django.contrib import admin
 from .models import (
     Product, Thumbnail, VariationType, Variation, VariationValue,
     Category, Brand, Review, Order, OrderItem, ShippingAddress,
-    Subcategory, SpecialOffer
+    Subcategory, SpecialOffer, ProductSpecification, Media
 )
+from django.utils.html import format_html
 
 class ThumbnailInline(admin.TabularInline):
     model = Thumbnail
@@ -18,28 +19,42 @@ class VariationInline(admin.TabularInline):
     extra = 1
     fields = ('variation_type', 'values')
 
-    def formset_factory(self, *args, **kwargs):
-        kwargs['formset'] = VariationInlineFormSet
-        return super().formset_factory(*args, **kwargs)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'theme_color', 'image_tag')
+    search_fields = ('name',)
+    filter_horizontal = ('subcategories',)
+
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="100" height="100" />', obj.image.url)
+        return 'No image'
+    image_tag.short_description = 'Image'
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'countInStock', 'createdAt')
-    list_filter = ('createdAt',)
-    search_fields = ('name', 'description', 'categories__name', 'brands__name')
+    list_display = ('name', 'SKU', 'price', 'countInStock', 'createdAt', 'image_tag')
+    search_fields = ('name', 'description', 'SKU', 'categories__name', 'brands__name')
     inlines = [ThumbnailInline, VariationInline]
-    filter_horizontal = ('special_offers', 'brands', 'categories', 'subcategories')  # Add 'special_offers' here
+    filter_horizontal = ('categories', 'brands', 'subcategories', 'special_offers')
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'theme_color', 'image')
-    search_fields = ('name',)
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="100" height="100" />', obj.image.url)
+        return 'No image'
+    image_tag.short_description = 'Image'
 
 @admin.register(Subcategory)
 class SubcategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'image')
+    list_display = ('name', 'image_tag')
     search_fields = ('name',)
     filter_horizontal = ('categories',)
+
+    def image_tag(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="100" height="100" />', obj.image.url)
+        return 'No image'
+    image_tag.short_description = 'Image'
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
@@ -47,8 +62,14 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(SpecialOffer)
 class SpecialOfferAdmin(admin.ModelAdmin):
-    list_display = ('offer_type', 'start_date', 'end_date')  # Correct the fields
+    list_display = ('offer_type', 'start_date', 'end_date', 'media_img_tag')
     search_fields = ('offer_type',)
+
+    def media_img_tag(self, obj):
+        if obj.media_img:
+            return format_html('<img src="{}" width="100" height="100" />', obj.media_img.url)
+        return 'No image'
+    media_img_tag.short_description = 'Media Image'
 
 @admin.register(VariationType)
 class VariationTypeAdmin(admin.ModelAdmin):
@@ -69,9 +90,9 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'totalPrice', 'isPaid', 'paidAt', 'isDelivered', 'deliveredAt', 'createdAt', 'deliveryPrice', 'deliveryDays')
+    list_display = ('user', 'totalPrice', 'isPaid', 'paidAt', 'isDelivered', 'deliveredAt', 'createdAt')
     list_filter = ('isPaid', 'isDelivered', 'createdAt')
-    search_fields = ('user__username', 'totalPrice', 'deliveryPrice', 'deliveryTerms', 'deliveryDays')
+    search_fields = ('user__username', 'totalPrice')
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
@@ -82,3 +103,19 @@ class OrderItemAdmin(admin.ModelAdmin):
 class ShippingAddressAdmin(admin.ModelAdmin):
     list_display = ('order', 'address', 'city', 'postalCode', 'country', 'shippingPrice')
     search_fields = ('order__user__username', 'address', 'city', 'postalCode', 'country')
+
+@admin.register(ProductSpecification)
+class ProductSpecificationAdmin(admin.ModelAdmin):
+    list_display = ('product', 'title', 'value')
+    search_fields = ('product__name', 'title', 'value')
+
+@admin.register(Media)
+class MediaAdmin(admin.ModelAdmin):
+    list_display = ('title', 'img_tag', 'caption', 'call_to_action_text', 'button_theme_color', 'text_theme_color', 'clip_theme_color', 'background_theme_color')
+    search_fields = ('title', 'caption', 'call_to_action_text')
+
+    def img_tag(self, obj):
+        if obj.img:
+            return format_html('<img src="{}" width="100" height="100" />', obj.img.url)
+        return 'No image'
+    img_tag.short_description = 'Image'

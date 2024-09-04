@@ -1,52 +1,91 @@
-import { Container } from 'react-bootstrap'
-import { HashRouter as Router, Route } from 'react-router-dom'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import HomeScreen from './screens/HomeScreen'
-import ProductScreen from './screens/ProductScreen'
-import CartScreen from './screens/CartScreen'
-import LoginScreen from './screens/LoginScreen'
-import RegisterScreen from './screens/RegisterScreen'
-import ProfileScreen from './screens/ProfileScreen'
-import ShippingScreen from './screens/ShippingScreen'
-import PaymentScreen from './screens/PaymentScreen'
-import PlaceOrderScreen from './screens/PlaceOrderScreen'
-import OrderScreen from './screens/OrderScreen'
-import UserListScreen from './screens/UserListScreen'
-import UserEditScreen from './screens/UserEditScreen'
-import ProductListScreen from './screens/ProductListScreen'
-import ProductEditScreen from './screens/ProductEditScreen'
-import OrderListScreen from './screens/OrderListScreen'
+import React from 'react';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom'; // Import necessary components
+import Header from './components/Header';
+import Footer from './components/Footer';
+import HomeScreen from './screens/HomeScreen';
+import ProductScreen from './screens/ProductScreen';
+import CartScreen from './screens/CartScreen';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import ShippingScreen from './screens/ShippingScreen';
+import PaymentScreen from './screens/PaymentScreen';
+import PlaceOrderScreen from './screens/PlaceOrderScreen';
+import OrderScreen from './screens/OrderScreen';
+import UserListScreen from './screens/UserListScreen';
+import UserEditScreen from './screens/UserEditScreen';
+import ProductListScreen from './screens/ProductListScreen';
+import ProductEditScreen from './screens/ProductEditScreen';
+import OrderListScreen from './screens/OrderListScreen';
 import SubcategoryScreen from './screens/SubCtegoryScreen';
+import CategoryScreen from './screens/CategoryScreen';
 
+// Define AuthLayout and MainLayout
+const AuthLayout = ({ children }) => (
+    <div className="min-h-screen flex flex-col">
+        {children}
+        {/* Optionally, you can add a footer or header here if needed */}
+    </div>
+);
+
+const MainLayout = ({ children }) => (
+    <div className="min-h-screen flex flex-col bg-gray-100">
+        <Header />
+        <main className="flex-grow">
+            {children}
+        </main>
+        <Footer />
+    </div>
+);
 
 function App() {
   return (
     <Router>
-      <Header />
-      <main className="pb-3">
-        <Container>
-          <Route path='/' component={HomeScreen} exact />
-          <Route path='/login' component={LoginScreen} />
-          <Route path='/register' component={RegisterScreen} />
-          <Route path='/profile' component={ProfileScreen} />
-          <Route path='/shipping' component={ShippingScreen} />
-          <Route path='/placeorder' component={PlaceOrderScreen} />
-          <Route path='/order/:id' component={OrderScreen} />
-          <Route path='/payment' component={PaymentScreen} />
-          <Route path='/product/:id' component={ProductScreen} />
-          <Route path='/cart/:id?' component={CartScreen} />
-           {/* <Route path='/category/:id' component={CategoryScreen} /> */}
-         <Route path='/subcategory/:id' component={SubcategoryScreen} /> 
-          <Route path='/admin/user/:id/edit' component={UserEditScreen} />
+      <Switch>
+        {/* Auth Layout Routes */}
+        <Route path={['/login', '/register', '/profile']}>
+          <AuthLayout>
+            <Route path='/login' component={LoginScreen} />
+            <Route path='/register' component={RegisterScreen} />
+            <Route path='/profile' component={ProfileScreen} />
+          </AuthLayout>
+        </Route>
 
-          <Route path='/admin/productlist' component={ProductListScreen} />
-          <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
-
-          <Route path='/admin/orderlist' component={OrderListScreen} />
-        </Container>
-      </main>
-      <Footer />
+        {/* Main Layout Routes */}
+        <Route path={[
+          '/', 
+          '/product/:id', 
+          '/cart/:id?', 
+          '/shipping', 
+          '/payment', 
+          '/placeorder', 
+          '/order/:id', 
+          '/admin/user/:id/edit', 
+          '/admin/productlist', 
+          '/admin/product/:id/edit', 
+          '/admin/orderlist', 
+          '/category/:id', 
+          '/subcategory/:id'
+        ]}>
+          <MainLayout>
+            <Route path='/' component={HomeScreen} exact />
+            <div className='w-[90%] mx-auto'>
+            <Route path='/product/:id' component={ProductScreen} />
+            <Route path='/cart/:id?' component={CartScreen} />
+            <Route path='/shipping' component={ShippingScreen} />
+            <Route path='/payment' component={PaymentScreen} />
+            <Route path='/placeorder' component={PlaceOrderScreen} />
+            <Route path='/order/:id' component={OrderScreen} />
+            <Route path='/admin/user/:id/edit' component={UserEditScreen} />
+            <Route path='/admin/productlist' component={ProductListScreen} />
+            <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
+            <Route path='/admin/orderlist' component={OrderListScreen} />
+            <Route path='/category/:id' component={CategoryScreen} />
+            <Route path='/subcategory/:id' component={SubcategoryScreen} />
+            </div>
+          </MainLayout>
+        </Route>
+      </Switch>
     </Router>
   );
 }

@@ -38,13 +38,13 @@ function Header() {
 
     return (
         <header className='relative z-20'>
-            <div className='bg-black text-white flex items-center justify-center h-12 text-sm'>
+            <div className='bg-gray-100 text-gray-700 flex items-center justify-center h-12 text-sm'>
                 Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%! <span className='font-semibold ml-2'>Shop Now!</span>
                 <div className='ml-28 flex items-center'> English<Dropdown /></div>
             </div>
 
             <header className="bg-white border-b border-gray-300">
-                <nav className="mx-auto flex items-center  px-3 py-3 lg:px-24" aria-label="Global">
+                <nav className="mx-auto flex items-center  px-3 py-[0.6rem] lg:px-24" aria-label="Global">
                     {/* Mobile Menu Button */}
                     
                     <div className="md:hidden flex items-center">
@@ -138,7 +138,22 @@ function Header() {
                         </div>
                     
                 </nav>
+                <form className="flex md:hidden max-w-lg mx-2 mb-3 border rounded-full border-black dark:border-gray-600" onSubmit={submitHandler}>
+    <div className="flex items-center justify-between h-[2.9rem] bg-gray-white dark:bg-gray-700 rounded-full w-full">
+        <input
+            type="search"
+            id="default-search"
+            className="block w-full h-full px-4 text-sm text-gray-900 bg-transparent dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-0"
+            placeholder='What are you looking for?'
+            onChange={(e) => setKeyword(e.target.value)}
+        />
+        <div className="flex items-center cursor-pointer p-3" onClick={submitHandler}>
+            <SearchIcon />
+        </div>
+    </div>
+</form>
 
+                    
                 {/* Mobile Menu */}
                 <div className={`sm:hidden ${menuOpen ? 'block' : 'hidden'}`} role="dialog" aria-modal="true">
                     <div className="fixed inset-0 bg-black/50 z-40"></div>

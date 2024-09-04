@@ -12,8 +12,8 @@ function Product({ product }) {
                     <img
                         src={product.image}
                         alt={product.name}
-                        className="object-cover w-[280px] h-[180px] md:h-[180px]"
-                        style={{ mixBlendMode: 'multiply', backgroundColor: '#F5F5F5' }}
+                        className="object-contain w-[280px] h-[180px] md:h-[180px]"
+                        style={{ mixBlendMode: 'multiply'}}
                     />
                     {product.discount && (
                         <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold rounded p-1">

@@ -8,13 +8,13 @@ from rest_framework import status
 from base.models import (
     Product, Review, Thumbnail, Variation,
     Category, Brand, Subcategory, ShippingAddress,
-    SpecialOffer
+    SpecialOffer,Media
 )
 from base.serializers import (
     ProductSerializer, ReviewSerializer, ThumbnailSerializer,
     VariationSerializer, CategorySerializer, BrandSerializer,
     SubcategorySerializer, ShippingAddressSerializer,
-    SpecialOfferSerializer
+    SpecialOfferSerializer,MediaSerializer
 )
 
 @api_view(['GET'])
@@ -23,7 +23,7 @@ def getProducts(request):
     products = Product.objects.filter(name__icontains=query).order_by('-createdAt')
 
     page = request.query_params.get('page', 1)
-    paginator = Paginator(products, 5)
+    paginator = Paginator(products, 10)
 
     try:
         products = paginator.page(page)
@@ -38,9 +38,12 @@ def getProducts(request):
 
 @api_view(['GET'])
 def getTopProducts(request):
-    products = Product.objects.filter(rating__gte=4).order_by('-rating')[:5]
-    serializer = ProductSerializer(products, many=True)
-    return Response(serializer.data)
+    all_media = Media.objects.all()
+    print(all_media)
+    media_serializer = MediaSerializer(all_media, many=True)
+    return Response({
+         "media":media_serializer.data
+    })
 
 @api_view(['GET'])
 def getProduct(request, pk):
@@ -259,4 +262,16 @@ def getSpecialOffers(request):
     # Fetch all active special offers
     special_offers = SpecialOffer.objects.all()
     serializer = SpecialOfferSerializer(special_offers, many=True)
+    return Response(serializer.data)
+@api_view(['GET'])
+def getProductsByCategory(request, category_id):
+    try:
+        category = Category.objects.get(id=category_id)
+    except Category.DoesNotExist:
+        return Response({'detail': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Get products associated with the category
+    products = Product.objects.filter(categories=category)
+    serializer = ProductSerializer(products, many=True)
+
     return Response(serializer.data)

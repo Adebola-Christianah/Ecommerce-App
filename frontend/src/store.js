@@ -12,7 +12,7 @@ import {
     productListBySubcategoryReducer,
     specialOfferListReducer 
 } from './reducers/productReducers'
-import { categoryListReducer } from './reducers/categoryReducers';
+import { categoryListReducer,productListByCategoryReducer } from './reducers/categoryReducers';
 import { cartReducer } from './reducers/cartReducers'
 
 import {
@@ -45,6 +45,7 @@ const reducer = combineReducers({
     productReviewCreate: productReviewCreateReducer,
     productTopRated: productTopRatedReducer,
     productListBySubcategory: productListBySubcategoryReducer,
+    productListByCategory: productListByCategoryReducer,
     specialOfferList:specialOfferListReducer,
     cart: cartReducer,
     userLogin: userLoginReducer,

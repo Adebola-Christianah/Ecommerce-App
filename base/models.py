@@ -1,6 +1,25 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+class Media(models.Model):
+    title = models.CharField(max_length=255)
+    img = models.ImageField(null=True, blank=True, default='/placeholder.png',upload_to='media_images/')
+    caption = models.CharField(max_length=255, null=True, blank=True)
+    call_to_action_text = models.CharField(max_length=255, null=True, blank=True)
+    button_theme_color = models.CharField(max_length=7, null=True, blank=True)
+    # text_theme_color = models.CharField(max_length=7, null=True, blank=True)
+    clip_theme_color = models.CharField(max_length=7, null=True, blank=True)
+    background_theme_color = models.CharField(max_length=7, null=True, blank=True)
+    text_theme_color = models.CharField(max_length=7, null=True, blank=True)
+    products = models.ManyToManyField('Product', related_name='media', blank=True)
+    categories = models.ManyToManyField('Category', related_name='media', blank=True)
+    subcategories = models.ManyToManyField('Subcategory', related_name='media', blank=True)
+    special_offers = models.ManyToManyField('SpecialOffer', related_name='media', blank=True)
+
+    def __str__(self):
+        return self.title
+
+
 class Category(models.Model):
     name = models.CharField(max_length=200, unique=True)
     theme_color = models.CharField(max_length=7, null=True, blank=True)
@@ -26,26 +45,34 @@ class Subcategory(models.Model):
     def __str__(self):
         return self.name
 
-
 class SpecialOffer(models.Model):
+    offer_type = models.CharField(max_length=50)  # Allows custom input
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=200, unique=True)
+
+    def __str__(self):
+        return self.name
+
     OFFER_CHOICES = [
-        ('clearance', 'Clearance Sale'),
-        ('flash', 'Flash Sale'),
-        ('deal', 'Special Deal'),
-        ('bestseller', 'Best Selling Product'),
-        # Add more offer types here
+        ('Clearance Sales', 'Clearance Sale'),
+        ('Flash SALES', 'Flash Sale'),
+        ('Special Deals', 'Special Deal'),
+        ('Bestseller', 'Best Selling Product'),
     ]
     offer_type = models.CharField(max_length=50, choices=OFFER_CHOICES)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
-        return self.get_offer_type_display()
+        return self.name
 
 
 class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200, null=True, blank=True)
+    SKU = models.CharField(max_length=100, unique=True, null=True, blank=True)
     image = models.ImageField(null=True, blank=True, default='/placeholder.png')
     brands = models.ManyToManyField(Brand, blank=True)
     categories = models.ManyToManyField(Category, blank=True)
@@ -58,7 +85,7 @@ class Product(models.Model):
     discount = models.IntegerField(null=True, blank=True)
     new_price = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
-    special_offers = models.ManyToManyField(SpecialOffer, related_name='products', blank=True)  # Add this line
+    special_offers = models.ManyToManyField(SpecialOffer, related_name='products', blank=True)
     _id = models.BigAutoField(primary_key=True, editable=False)
 
     def __str__(self):
@@ -156,3 +183,12 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return str(self.address)
+
+
+class ProductSpecification(models.Model):
+    product = models.ForeignKey(Product, related_name='specifications', on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    value = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f'{self.title}: {self.value}'

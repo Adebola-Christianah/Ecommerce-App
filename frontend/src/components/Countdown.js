@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Countdown = () => {
+const Countdown = ({ end_date }) => {
     const Ref = useRef(null);
-
-    // The state for our timer
     const [timer, setTimer] = useState({
         days: "00",
         hours: "00",
@@ -35,6 +33,8 @@ const Countdown = () => {
                 minutes: minutes > 9 ? minutes : "0" + minutes,
                 seconds: seconds > 9 ? seconds : "0" + seconds
             });
+        } else {
+            clearInterval(Ref.current);
         }
     };
 
@@ -46,25 +46,18 @@ const Countdown = () => {
         Ref.current = id;
     };
 
-    const getDeadTime = () => {
-        let deadline = new Date();
-        deadline.setDate(deadline.getDate() + 3); // Example: set deadline 3 days from now
-        deadline.setHours(deadline.getHours() + 23);
-        deadline.setMinutes(deadline.getMinutes() + 19);
-        deadline.setSeconds(deadline.getSeconds() + 56);
-        return deadline;
-    };
-
     useEffect(() => {
-        clearTimer(getDeadTime());
+        if (end_date) {
+            clearTimer(end_date);
+        }
         return () => {
             if (Ref.current) clearInterval(Ref.current);
         };
-    }, []);
+    }, [end_date]);
 
     return (
-        <div className='flex md:flex-row flex-col my-2 md:my-4 md:gap-24 text-black  items-center'>
-            <h2 className=''>Flash Sales</h2>
+        <div className='flex md:flex-row flex-col my-2 md:my-4 md:gap-24 text-black items-center'>
+            <h2 className=''>Offer Ends In:</h2>
             <div className='flex space text-center items-center font-bold '>
                 <div className='flex flex-col items-center'>
                     <div>Days</div>

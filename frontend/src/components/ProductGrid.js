@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 
 function ProductGrid() {
     return (
-        <div className="container mx-auto p-6">
-            <div className="flex gap-4 h-[75vh]">
+        <div className="md:w-[90%] lg:w-full  mx-auto py-6">
+            <div className="flex flex-col md:flex-row gap-4 h-[75vh]">
                 {/* First div with background image */}
                 <div className="flex-1 bg-contain bg-no-repeat bg-center bg-black rounded-lg shadow-md" style={{ backgroundImage: `url(${ps5Image})` }}>
                     <div className="flex flex-col justify-end h-full text-white bg-black bg-opacity-50 p-6 rounded-lg">

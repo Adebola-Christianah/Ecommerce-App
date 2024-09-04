@@ -1,120 +1,127 @@
-
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+@tailwind utilities;
 
-/* Example of how to use the imported fonts in your CSS */
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
-body {
-    font-family: 'Poppins', sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', sans-serif;
-}
-.thumbnail-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.thumbnail-container .chevron {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.5rem;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.thumbnail-container .chevron.left {
-  left: 0;
-}
-
-.thumbnail-container .chevron.right {
-  right: 0;
-}
-
-.thumbnail-container .thumbnails {
-  display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-}
-
-.thumbnail-container .thumbnail {
-  border: 2px solid transparent;
-  cursor: pointer;
-}
-
-.thumbnail-container .thumbnail.active {
-  border-color: red;
-}
-
-
-main{
+main {
     min-height: 80vh;
 }
+/* styles.css */
+@keyframes pulseFade {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+  /* styles.css */
+.h-full-minus-0_75rem {
+    height: calc(100% - 0.75rem);
+  }
+  
+  .pulse-fade {
+    animation: pulseFade 1s infinite;
+  }
+  
+.playfair-display{
+    font-family: "Lora", serif;
+    /* font-optical-sizing: auto; */
+    font-weight: 900;
+    font-style: normal;
+  }
+  
 
-/* a{
-  text-decoration: none;
-} */
-h1{
-  font-size: 1.8rem;
-  padding:1rem 0;
-  font-weight: 900;
+h1 {
+    font-size: 1.8rem;
+    padding: 1rem 0;
 }
 
-h2{
-  font-size: 1.4rem;
-  padding:0.5rem 0;
+h2 {
+    font-size: 1.4rem;
+    padding: 0.5rem 0;
 }
 
-/* h3{
-    padding:1rem 0;
-} */
-
-.rating span{
-  margin:0.1rem;
+h3 {
+    padding: 1rem 0;
 }
 
-/* carousel */
+.rating span {
+    margin: 0.1rem;
+}
+
+/* Carousel */
 .carousel-item-next,
 .carousel-item-prev,
 .carousel-item.active {
-  display: flex;
+    display: flex;
 }
+
 .carousel-caption {
-  position: absolute;
-  top: 0;
+    position: absolute;
+    top: 0;
 }
 
 .carousel-caption h4 {
-  color: #fff;
+    color: #fff;
 }
 
 .carousel img {
-  display:block;
-  height: 300px;
-  padding: 30px;
-  margin: 40px;
-  border-radius: 50%;
-  margin-left: auto;
-  margin-right: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
+
 .carousel a {
-  margin: 0 auto;
+    margin: 0 auto;
 }
+
 @media only screen and (max-width: 900px) {
-  .carousel-caption h2 {
-    font-size: 2.5vw;
-    color: red;
-  }
-  .carousel-image{
-    margin-top: 500px;
-  }
-  body{
-    background: red;
-  }
+    .carousel-caption h2 {
+        font-size: 2.5vw;
+        color: red;
+    }
+    .carousel-image {
+        margin-top: 500px;
+    }
+    body {
+        background: red;
+    }
+}
+
+.carousel-item {
+    position: relative; /* Avoid using !important */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: transparent; /* Default background */
+    height: 40px;
+    width: 40px;
+    top: 50%!important;
+    position: absolute;
+    transform: translateY(-50%); /* Center vertically */
+    z-index: 10; /* Ensure it's on top */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.carousel-control-prev {
+    left: 10px; /* Adjust position as necessary */
+}
+
+.carousel-control-next {
+    right: 10px; /* Adjust position as necessary */
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: black; /* Black background on hover */
+}
+
+/* Accessibility focus styles */
+.carousel-control-prev:focus,
+.carousel-control-next:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5); /* Add a custom focus style */
 }
