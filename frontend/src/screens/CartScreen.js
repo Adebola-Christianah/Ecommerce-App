@@ -58,7 +58,7 @@ function CartScreen({ history }) {
     const productToDelete = showModal !== null ? cartItems.find(item => item.product === showModal) : null;
 
     return (
-        <div className="container mx-auto mt-6">
+        <div className="px-6 mx-auto mt-6 bg-white rounded-lg">
             <div className="flex flex-col md:flex-row">
                 <div className="w-full">
                     <h1 className="text-2xl mb-4">Shopping Cart</h1>

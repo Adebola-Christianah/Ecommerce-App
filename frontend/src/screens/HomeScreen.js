@@ -130,7 +130,7 @@ function HomeScreen({ history }) {
     };
 
     return (
-        <div className="w-full lg:w-[90%] mx-auto">
+        <div className="w-full lg:w-[95%] mx-auto">
             {loadingData ? (
                 <Loader /> // Show a single loader while data is being fetched
             ) : (
@@ -144,12 +144,15 @@ function HomeScreen({ history }) {
       </div>
       
       {/* Product Carousel and Sidebar */}
-      <div className="w-full lg:w-[82%] flex md:justify-center md:h-[24rem]">
+      <div className="w-full  flex md:justify-center lg:gap-5 md:h-[24rem]">
+        <div className='w-full lg:w-[76%]'>
         <ProductCarousel loading={loading} products={productTopRated?.products} />
+        </div>
+       
         
         {/* Sidebar Section */}
-        <div className="px-4 max-w-md mx-auto hidden md:flex flex-col h-full gap-3">
-  <div className="flex flex-col space-y-4 w-[14.5rem] bg-white rounded p-4 h-[calc(50%-0.375rem)]">
+        <div className=" w-[24%] hidden lg:flex flex-col h-full gap-3">
+  <div className="flex flex-col space-y-4 w-full bg-white rounded p-4 h-[calc(50%-0.375rem)]">
     {/* CALL TO ORDER Section */}
     <p className="font-semibold text-gray-700 w-full">CALL TO ORDER</p>
     <div className="flex items-center space-x-2 w-full">
@@ -160,7 +163,7 @@ function HomeScreen({ history }) {
     {/* Sell on Jumia Section */}
     <div className="flex items-center space-x-2">
       <i className="fas fa-store text-yellow-500"></i>
-      <div className="font-semibold text-gray-700">Sell on Jumia</div>
+      <div className="font-semibold text-gray-700">Sell on Exclusive</div>
     </div>
     
     {/* Best Deals Section */}
@@ -191,7 +194,7 @@ function HomeScreen({ history }) {
                             </h2>
                         </div>
                         {keyword === '' && categories && categories.length > 0 ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4 bg-white rounded-md">
+                            <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-5 lg:gap-4 md:p-4 p-1 bg-white rounded-md">
                                 {categories.map((category) => (
                                     <div
                                         key={category.id}
@@ -204,7 +207,7 @@ function HomeScreen({ history }) {
   <img
     src={category.image || ''}
     alt={category.name}
-    className="h-32 w-full rounded-lg object-contain bg-gray-200"
+    className="lg:h-32 md:h-[9.5rem] h-[7rem]  w-auto rounded-lg object-contain bg-gray-200"
     style={{
       backgroundColor: category.theme_color || 'gray',
     }}

@@ -9,7 +9,8 @@ import { ReactComponent as UserActive } from '../images/userActive.svg';
 import { ReactComponent as UserIcon } from '../images/userIcon.svg';
 import { logout } from '../actions/userActions';
 import './css/header.css';
-import Logo from '../images/Logo.png';
+import Logo from '../images/logoIcon.svg';
+import WhiteLogo from '../images/whiteLogoIcon.svg';
 
 function Header() {
     const userLogin = useSelector(state => state.userLogin);
@@ -37,13 +38,26 @@ function Header() {
     };
 
     return (
-        <header className='relative z-20'>
-            <div className='bg-gray-100 text-gray-700 flex items-center justify-center h-12 text-sm'>
-                Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%! <span className='font-semibold ml-2'>Shop Now!</span>
-                <div className='ml-28 flex items-center'> English<Dropdown /></div>
+        <header className='relative z-20 '>
+            <div className='bg-black text-gray-100 flex items-center justify-between h-12 text-sm md:px-12'>
+            <div className='flex justify-between items-center'>
+            <div className="flex items-center  flex-1">
+                        {/* <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline gap-1 md:gap-2" >
+                            <img src={WhiteLogo} alt="Logo" className="md:h-6 h-4" />
+                          <span>Exclusive</span>
+                        </Link> */}
+        
+
+                    
+                    </div>
+           
+            </div>
+            
+            <div> Discover Deals, Shop with Ease, and Elevate Your Everyday! </div>
+                <div className='flex items-center'> English<Dropdown /></div>
             </div>
 
-            <header className="bg-white border-b border-gray-300">
+            <header className="bg-white border-b border-gray-300 lg:px-12">
                 <nav className="mx-auto flex items-center  px-3 py-[0.6rem] lg:px-24" aria-label="Global">
                     {/* Mobile Menu Button */}
                     
@@ -57,21 +71,28 @@ function Header() {
                     
                     {/* Logo */}
                     <div className="flex items-center  flex-1">
-                        <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline" >
-                            {/* <img src={Logo} alt="Logo" className="h-8" /> */}
-                            <span className="ml-2">Exclusive</span>
+                        <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline gap-1 " >
+                            <img src={Logo} alt="Logo" className="md:h-8 h-6" />
+                            <span className="  ">Exclusive</span>
                         </Link>
                         <form className="hidden md:flex max-w-lg mx-auto" onSubmit={submitHandler}>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <SearchIcon />
-                                </div>
-                                <div className='flex gap-3 items-center'>
-                                    <input type="search" id="default-search" className="block w-full px-12 text-sm text-gray-900 h-[3rem] bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white rounded-md" placeholder='What are you looking for?' onChange={(e) => setKeyword(e.target.value)} />
-                                    <button className='bg-[#DB4444] text-[#fff] px-3 h-[3rem] font-medium rounded-md'>Search</button>
-                                </div>
-                            </div>
-                        </form>
+  <div className="relative w-full">
+    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+      <SearchIcon />
+    </div>
+    <div className='flex gap-3 items-center'>
+      <input 
+        type="search" 
+        id="default-search" 
+        className="block w-full md:w-76 lg:w-[36rem] px-12 text-sm text-gray-900 h-[2.8rem]  bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white rounded-md" 
+        placeholder='What are you looking for?' 
+        onChange={(e) => setKeyword(e.target.value)} 
+      />
+      <button className='bg-[#DB4444] text-[#fff] px-3 h-[2.8rem]  font-medium rounded-md'>Search</button>
+    </div>
+  </div>
+</form>
+
                     
                     </div>
                    
@@ -160,7 +181,7 @@ function Header() {
                     <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white py-6 overflow-y-auto">
                         <div className="flex items-center justify-between px-4">
                             <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline">
-                                <img src={Logo} alt="Logo" className="h-8" />
+                                <img src={Logo} alt="Logo" className="h-5" />
                                 {/* <span className="ml-2">Exclusive</span> */}
                             </Link>
                             <button type="button" className="-m-2.5 p-2.5 text-gray-700" onClick={() => setMenuOpen(false)}>

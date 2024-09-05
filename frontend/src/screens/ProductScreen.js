@@ -142,7 +142,7 @@ function ProductScreen({ match, history }) {
                     {sizes.map((size, index) => (
                         <button
                             key={index}
-                            className={`size-box ${selectedSize === size ? 'bg-blue-500 text-white' : ''}`}
+                            className={`size-box border-r-2 border-gray-600 pr-1 ${selectedSize === size ? 'bg-blue-500 text-white' : ''}`}
                             onClick={() => handleSizeClick(size)}
                         >
                             {size}
@@ -173,7 +173,7 @@ function ProductScreen({ match, history }) {
     };
 
     return (
-        <div className="container mx-auto ">
+        <div className=" mx-auto ">
             <Link to='/' className='btn btn-light my-3'>
                 Go Back
             </Link>
@@ -183,10 +183,11 @@ function ProductScreen({ match, history }) {
                 <Message variant='danger'>{error}</Message>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-4 rounded-md">
+                    
                     {/* Images Section */}
-                    <div className="flex flex-col md:flex-row md:gap-4 h-full relative">
+                    <div className="flex flex-col md:flex-row md:gap-4  h-[24rem] md:items-center relative">
                         {/* Thumbnails and Arrow Section */}
-                        <div className="md:hidden sm:flex flex justify-center w-full h-full rounded-sm bg-[#fafafa]">
+                        <div className="md:hidden sm:flex mb-4 md:mb-0 flex justify-center w-full h-full rounded-sm bg-[#fafafa]">
                             <img
                                 src={mainImage}
                                 alt={product.name}
@@ -204,7 +205,7 @@ function ProductScreen({ match, history }) {
                             </button>
                             <button
                                 onClick={() => scrollThumbnails(-1, true)}
-                                className="absolute -left-8 bottom-12 z-10 p-1 sm:block md:hidden"
+                                className="absolute -left-8 bottom-2 z-10 p-1 sm:block md:hidden"
                             >
                                 <ChevronLeft/>
                             </button>
@@ -216,7 +217,7 @@ function ProductScreen({ match, history }) {
                             </button>
                             <button
                                 onClick={() => scrollThumbnails(1, true)}
-                                className="absolute -right-8  bottom-12 z-10 p-1 sm:block md:hidden"
+                                className="absolute -right-8  bottom-2 z-10 p-1 sm:block md:hidden"
                             >
                                 <ChevronRight/>
                             </button>

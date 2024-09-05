@@ -69,7 +69,7 @@ function App() {
         ]}>
           <MainLayout>
             <Route path='/' component={HomeScreen} exact />
-            <div className='w-[90%] mx-auto'>
+            <div className='w-[95%] mx-auto '>
             <Route path='/product/:id' component={ProductScreen} />
             <Route path='/cart/:id?' component={CartScreen} />
             <Route path='/shipping' component={ShippingScreen} />

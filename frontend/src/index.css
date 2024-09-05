@@ -67,11 +67,7 @@ h3 {
     color: #fff;
 }
 
-.carousel img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
+
 
 .carousel a {
     margin: 0 auto;
@@ -82,37 +78,33 @@ h3 {
         font-size: 2.5vw;
         color: red;
     }
-    .carousel-image {
-        margin-top: 500px;
-    }
     body {
         background: red;
     }
 }
 
-.carousel-item {
-    position: relative; /* Avoid using !important */
-}
+
 
 .carousel-control-prev,
 .carousel-control-next {
     background-color: transparent; /* Default background */
-    height: 40px;
-    width: 40px;
+    height: 40px!important;
+    width: 40px!important; /* Reduced width to 20px */
     top: 50%!important;
     position: absolute;
     transform: translateY(-50%); /* Center vertically */
-    z-index: 10; /* Ensure it's on top */
+    z-index: 30; /* Ensure it's on top */
     transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .carousel-control-prev {
-    left: 10px; /* Adjust position as necessary */
+    left: 15px!important; /* Adjust position as necessary */
 }
 
 .carousel-control-next {
-    right: 10px; /* Adjust position as necessary */
+    right: 15px!important; /* Adjust position as necessary */
 }
+
 
 .carousel-control-prev:hover,
 .carousel-control-next:hover {
