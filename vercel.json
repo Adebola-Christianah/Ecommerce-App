@@ -13,10 +13,6 @@
         "src": "/(.*)",
         "dest": "backend/wsgi.py"
       }
-    ],
-    "ignore": [
-      "node_modules/",
-      "build/",
-      "tests/"
     ]
+    
   }
