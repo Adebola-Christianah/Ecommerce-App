@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+main {
+    min-height: 80vh;
+}
+/* styles.css */
+@keyframes pulseFade {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+  /* styles.css */
+.h-full-minus-0_75rem {
+    height: calc(100% - 0.75rem);
+  }
+  
+  .pulse-fade {
+    animation: pulseFade 1s infinite;
+  }
+  
+.playfair-display{
+    font-family: "Lora", serif;
+    /* font-optical-sizing: auto; */
+    font-weight: 900;
+    font-style: normal;
+  }
+  
+
+h1 {
+    font-size: 1.8rem;
+    padding: 1rem 0;
+}
+
+h2 {
+    font-size: 1.4rem;
+    padding: 0.5rem 0;
+}
+
+h3 {
+    padding: 1rem 0;
+}
+
+.rating span {
+    margin: 0.1rem;
+}
+
+/* Carousel */
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+    display: flex;
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 0;
+}
+
+.carousel-caption h4 {
+    color: #fff;
+}
+
+
+
+.carousel a {
+    margin: 0 auto;
+}
+
+@media only screen and (max-width: 900px) {
+    .carousel-caption h2 {
+        font-size: 2.5vw;
+        color: red;
+    }
+    body {
+        background: red;
+    }
+}
+
+
+
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: transparent; /* Default background */
+    height: 40px!important;
+    width: 40px!important; /* Reduced width to 20px */
+    top: 50%!important;
+    position: absolute;
+    transform: translateY(-50%); /* Center vertically */
+    z-index: 30; /* Ensure it's on top */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.carousel-control-prev {
+    left: 15px!important; /* Adjust position as necessary */
+}
+
+.carousel-control-next {
+    right: 15px!important; /* Adjust position as necessary */
+}
+
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: black; /* Black background on hover */
+}
+
+/* Accessibility focus styles */
+.carousel-control-prev:focus,
+.carousel-control-next:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5); /* Add a custom focus style */
+}
+/* Breathing animation for the SVG logo */
+@keyframes breathing {
+    0% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+  }
+  
+  /* Apply breathing animation to the SVG logo */
+  .breathing-logo {
+    animation: breathing 2s ease-in-out infinite;
+  }
+  
+  /* Loading bar animation */
+  @keyframes loading {
+    0% {
+      width: 0%;
+    }
+    50% {
+      width: 50%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+  
+  /* Apply loading bar animation */
+  .loading-bar {
+    animation: loading 2s ease-in-out infinite;
+  }
+  /* HTML: <div class="loader"></div> */
+.loader {
+
+
+  box-shadow: 0 0 0 0 #0004;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {
+    100% {box-shadow: 0 0 0 30px #0000}
+}

@@ -1,0 +1,19 @@
+body{
+    background: pink;
+}
+div{
+    height: 300px;
+    width: 300px;
+    border: 5px black solid;
+    margin-bottom: 5px;
+}
+.section1{
+    background-color: yellow;
+}
+.section2{
+    background-color: green;
+}
+/* styles.css */
+a {
+    text-decoration: none; /* Removes the underline */
+}
