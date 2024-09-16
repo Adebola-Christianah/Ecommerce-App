@@ -50,8 +50,8 @@ function ProductCarousel({error,loading,products}) {
             width: '65%',
           }}
         >
-          <div className="text-white text-left w-4/5 z-30">
-            <div className="text-2xl md:text-5xl font-bold md:mb-2 w-4/5 playfair-display break-words text-white">
+          <div className="text-white text-left w-4/5 z-30 mx-0 md:mx-auto">
+            <div className="text-2xl md:text-5xl font-bold md:mb-2 w-full md:w-4/5 playfair-display break-words text-white">
               {product.title}
             </div>
             <p className="text-white md:text-base">{product.caption}</p>

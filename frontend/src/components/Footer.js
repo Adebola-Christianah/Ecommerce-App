@@ -6,7 +6,7 @@ import AppleStore from '../images/download-appstore.png';
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-10">
+    <footer className="bg-black text-white py-10 mt-12">
       <div className="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8">
         {/* Exclusive Section */}
         <div>

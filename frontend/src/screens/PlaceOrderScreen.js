@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { createOrder } from '../actions/orderActions'
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { ORDER_CREATE_RESET } from '../constants/orderConstants'
 
 function PlaceOrderScreen({ history }) {
@@ -48,6 +50,8 @@ function PlaceOrderScreen({ history }) {
 
     return (
         <div>
+            <Header/>
+            <div className='w-[95%] mx-auto'>
             <CheckoutSteps step1 step2 step3 step4 />
             <Row>
                 <Col md={8}>
@@ -91,7 +95,7 @@ function PlaceOrderScreen({ history }) {
                                                     </Col>
 
                                                     <Col md={4}>
-                                                        {item.qty} X ${item.price} = ${(item.qty * item.price).toFixed(2)}
+                                                        {item.qty} X ₦{item.price} = ₦{(item.qty * item.price).toFixed(2)}
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>
@@ -114,28 +118,28 @@ function PlaceOrderScreen({ history }) {
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Items:</Col>
-                                    <Col>${cart.itemsPrice}</Col>
+                                    <Col>₦{cart.itemsPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Shipping:</Col>
-                                    <Col>${cart.shippingPrice}</Col>
+                                    <Col>₦{cart.shippingPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Tax:</Col>
-                                    <Col>${cart.taxPrice}</Col>
+                                    <Col>₦{cart.taxPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Total:</Col>
-                                    <Col>${cart.totalPrice}</Col>
+                                    <Col>₦{cart.totalPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
 
@@ -160,6 +164,10 @@ function PlaceOrderScreen({ history }) {
                 </Col>
             </Row>
         </div>
+        
+            <Footer/>
+        </div>
+        
     )
 }
 

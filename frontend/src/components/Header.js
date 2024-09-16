@@ -16,6 +16,8 @@ function Header() {
     const userLogin = useSelector(state => state.userLogin);
     const cart = useSelector(state => state.cart);
     const { cartItems } = cart;
+    const wishlist = useSelector((state) => state.wishlist);
+    const { wishlistItems } = wishlist;
     const { userInfo } = userLogin;
     const [expand, setExpand] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -31,12 +33,141 @@ function Header() {
     const submitHandler = (e) => {
         e.preventDefault();
         if (keyword) {
-            history.push(`/?keyword=${keyword}&page=1`);
+            history.push(`/products?keyword=${keyword}&page=1`);
         } else {
             history.push(history.location.pathname);
         }
     };
+    const categoryList = useSelector((state) => state.categoryList);
+    const { loading: loadingCategories, error: errorCategories, categories } = categoryList;
+const [isMouseInCategory, setIsMouseInCategory] = useState(false);
 
+const handleMouseEnter = (categoryId) => {
+  setHoveredCategory(categoryId);
+};
+
+const handleMouseLeave = () => {
+  if (!isMouseInCategory) {
+    setHoveredCategory(null);
+  }
+};
+
+const handleMouseEnterCategory = () => {
+  setIsMouseInCategory(true);
+};
+
+const handleMouseLeaveCategory = () => {
+  setIsMouseInCategory(false);
+  setHoveredCategory(null);
+};
+const renderCategories = () => (
+    <ul className="space-y-2 bg-white">
+        {categories.map((category) => (
+            <li
+                key={category.id}
+                onMouseEnter={() => handleMouseEnter(category.id)}
+                onMouseLeave={handleMouseLeave}
+                className="cursor-pointer py-2 px-4"
+            >
+                
+                <div className="flex items-center gap-2 hover:text-red-500" style={{ transition: 'color 0.3s' }}>
+                    {category.svg && (
+                        <div
+                            className="flex-shrink-0"
+                            style={{ width: '24px', height: '24px' }}
+                            dangerouslySetInnerHTML={{ __html: category.svg }}
+                        />
+                    )}
+                    <div className="font-semibold text-gray-700">
+                        <Link to={`/category/${category.id}`} className="hover:text-red-500" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+                            {category.name}
+                        </Link>
+                    </div>
+                    
+                </div>
+                {hoveredCategory === category.id && (
+                        <div className=" md:hidden flex   w-full bg-white z-30">
+                            {renderSelectedCategory()}
+                        </div>
+                    )}
+            </li>
+        ))}
+    </ul>
+);
+
+const renderSelectedCategory = () => {
+    const selectedCategory = categories.find((category) => category.id === hoveredCategory);
+    if (!selectedCategory) return null;
+
+    return (
+        <div
+            className="grid grid-cols-1 md:grid-cols-2 md:gap-6 gap-3 bg-white p-4 h-full"
+            onMouseEnter={handleMouseEnterCategory}
+            onMouseLeave={handleMouseLeaveCategory}
+        >
+            {/* Subcategories */}
+            {selectedCategory.subcategories.length > 0 && (
+                <div className="flex flex-col">
+                    <div className="font-semibold text-base text-gray-700 mb-2">
+                        {selectedCategory.name}-+
+                    </div>
+                    <ul className="space-y-1">
+                        {selectedCategory.subcategories.map((subcategory) => (
+                            <li key={subcategory.id}>
+                                <Link
+                                    to={`/subcategory/${subcategory.id}`}
+                                    className="text-sm text-gray-500 hover:text-gray-800 hover:font-semibold"
+                                            style={{textDecoration:'none'}}
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    {subcategory.name}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {/* Child Categories */}
+            {selectedCategory.children.length > 0 && selectedCategory.children.map((child) => (
+                <div key={child.id} className="flex flex-col">
+                    <div className="font-semibold text-gray-600 pb-2 text-base hover:text-gray-800 ">
+                        <Link
+                            to={`/category/${child.id}`}
+                            className="hover:text-gray-800"
+                            onClick={() => setMenuOpen(false)}
+                            style={{textDecoration:'none'}}
+                        >
+                            {child.name}
+                        </Link>
+                    </div>
+                    {child.subcategories && (
+                        <ul className="space-y-1">
+                            {child.subcategories.map((sub) => (
+                                <li key={sub.id}>
+                                    <Link
+                                        to={`/subcategory/${sub.id}`}
+                                        className="text-sm text-gray-500 hover:text-gray-800 hover:font-semibold"
+                                        onClick={() => setMenuOpen(false)}
+                                        style={{textDecoration:'none'}}
+                                    >
+                                        {sub.name}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+  
+      
+      
+       
+    // State to manage which category is hovered
+    const [hoveredCategory, setHoveredCategory] = useState(null);
     return (
         <header className='relative z-20 '>
             <div className='bg-black text-gray-100 flex items-center justify-between h-12 text-sm md:px-12'>
@@ -61,7 +192,7 @@ function Header() {
                 <nav className="mx-auto flex items-center  px-3 py-[0.6rem] lg:px-24" aria-label="Global">
                     {/* Mobile Menu Button */}
                     
-                    <div className="md:hidden flex items-center">
+                    <div className="lg:hidden flex items-center ">
                         <button type="button" className=" text-gray-700" onClick={() => setMenuOpen(!menuOpen)}>
                             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -70,10 +201,10 @@ function Header() {
                     </div>
                     
                     {/* Logo */}
-                    <div className="flex items-center  flex-1">
-                        <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline gap-1 " >
-                            <img src={Logo} alt="Logo" className="md:h-8 h-6" />
-                            <span className="  ">Exclusive</span>
+                    <div className="flex items-center  flex-1 ml-1">
+                            <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline gap-1 " style={{textDecoration:'none'}}>
+                            <img src={Logo} alt="Logo" className=" md:h-8 h-4 md:w-8 w-4" />
+                            <span className=" md:text-lg text-base ">Exclusive</span>
                         </Link>
                         <form className="hidden md:flex max-w-lg mx-auto" onSubmit={submitHandler}>
   <div className="relative w-full">
@@ -130,7 +261,7 @@ function Header() {
                                         >
                                             <ul className="py-2 text-sm text-gray-700">
                                                 <li>
-                                                    <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100 no-underline">Profile</Link>
+                                                    <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100 no-underline"style={{textDecoration:'none'}}>Profile</Link>
                                                 </li>
                                                 <li onClick={logoutHandler} className="block px-4 py-2 cursor-pointer hover:bg-gray-100">
                                                     Logout
@@ -140,20 +271,27 @@ function Header() {
                                     )}
                                 </>
                             ) : (
-                                <Link className='flex items-center text-gray-900 no-underline' to='/login'>
+                                <Link className='flex items-center text-gray-900 no-underline' to='/login'style={{textDecoration:'none'}}>
                                     <UserIcon className="mr-1" /> Login
                                     {/* <span className='hidden lg'>Login</span> */}
                                 </Link>
                             )}
                             <div className='relative flex items-center'>
-                                <WishList className="mr-2" />
-                                <Link to='/cart' className='relative'>
+                                <div className='relative'>
+                                <Link to='/wishlist' style={{textDecoration:'none'}}> <WishList className="mr-2" /></Link>
+                                    <span className='absolute top-0 right-2 translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center'>
+                                            {wishlistItems.length}
+                                        </span>
+                                </div>
+                               
+                               
+                                <Link to='/cart' className='relative' style={{textDecoration:'none'}}>
                                     <Cart />
-                                    {cartItems.length > 0 && (
+                                    
                                         <span className='absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center'>
                                             {cartItems.length}
                                         </span>
-                                    )}
+                                    
                                 </Link>
                             </div>
                         </div>
@@ -175,50 +313,29 @@ function Header() {
 </form>
 
                     
-                {/* Mobile Menu */}
-                <div className={`sm:hidden ${menuOpen ? 'block' : 'hidden'}`} role="dialog" aria-modal="true">
-                    <div className="fixed inset-0 bg-black/50 z-40"></div>
-                    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white py-6 overflow-y-auto">
-                        <div className="flex items-center justify-between px-4">
-                            <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline">
-                                <img src={Logo} alt="Logo" className="h-5" />
-                                {/* <span className="ml-2">Exclusive</span> */}
-                            </Link>
-                            <button type="button" className="-m-2.5 p-2.5 text-gray-700" onClick={() => setMenuOpen(false)}>
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div className="mt-6">
-                            <div className="-my-6 divide-y divide-gray-500">
-                                <div className="space-y-2 py-6">
-                                    <button type="button" className="flex w-full items-center justify-between py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                                        Product
-                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                            <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
-                                        </svg>
-                                    </button>
-                                    <div className="mt-2 space-y-2">
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Analytics</Link>
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Engagement</Link>
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Security</Link>
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Integrations</Link>
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Automations</Link>
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Watch demo</Link>
-                                        <Link className="block py-2 pl-6 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Contact sales</Link>
-                                    </div>
-                                </div>
-                                <Link className="block px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Features</Link>
-                                <Link className="block px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Marketplace</Link>
-                                <Link className="block px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Company</Link>
-                                <div className="py-6">
-                                    <Link className="block px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div className={`fixed top-0 inset-0 bg-black/50 z-40 h-screen ${menuOpen ? 'block' : 'hidden'}`} role="dialog" aria-modal="true">
+  <div className={`fixed top-0 inset-y-0 md:left-0 sm:right-0 z-50 h-screen bg-white py-6 overflow-y-auto w-[90%]`}>
+    <div className="flex items-center justify-between px-4">
+      {/* Logo and Close Button */}
+      <Link to="/" className="flex items-center text-[#DB4444] font-bold text-[24px] no-underline" style={{textDecoration:'none'}}>
+        <img src={Logo} alt="Logo" className="h-5" />Exclusive
+      </Link>
+      <button type="button" className="-m-2.5 p-2.5 text-gray-700" onClick={() => setMenuOpen(false)}>
+        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    {/* Categories List */}
+  <div className='flex flex-col md:flex-row mt-4 h-screen'>
+    <div className='w-full md:w-[30%] md:border-r border-gray-700'>{renderCategories()}</div>
+  <div className="hidden md:flex w-full md:w-[70%]">{renderSelectedCategory()}</div>
+  </div>
+  </div>
+</div>
+
+
             </header>
         </header>
     );

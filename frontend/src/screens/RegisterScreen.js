@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Loader from '../components/Loader';
+import AuthSpinner from '../components/AuthSpinner';
 import Message from '../components/Message';
 import { register } from '../actions/userActions';
 import IMAGE from '../images/dl.beatsnoop 1.png';
@@ -54,7 +54,6 @@ function RegisterScreen({ location, history }) {
 
                     {message && <Message variant="danger">{message}</Message>}
                     {error && <Message variant="danger">{error}</Message>}
-                    {loading && <Loader />}
 
                     <form onSubmit={submitHandler}>
                         <div className="mb-4">
@@ -117,13 +116,16 @@ function RegisterScreen({ location, history }) {
                                 required
                             />
                         </div>
-                        <div className="flex flex-col md:flex-row items-center justify-between">
+                      
+                        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                             <button
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring w-full md:w-auto"
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring w-full flex items-center justify-center"
                                 type="submit"
                             >
-                                Register
+                               {loading && <AuthSpinner />} <span>{loading ? '' : 'Register'}</span>
                             </button>
+                           
+                     
                         </div>
                     </form>
                     <div className="text-center mt-6 md:mt-8">

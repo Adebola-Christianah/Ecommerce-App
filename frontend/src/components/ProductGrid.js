@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 
 function ProductGrid() {
     return (
-        <div className="md:w-[90%] lg:w-full  mx-auto py-6">
-            <div className="flex flex-col md:flex-row gap-4 h-[75vh]">
+        <div className=" lg:w-full  mx-auto py-6">
+            <div className="flex flex-col lg:flex-row gap-4 md:h-[75vh]">
                 {/* First div with background image */}
                 <div className="flex-1 bg-contain bg-no-repeat bg-center bg-black rounded-lg shadow-md" style={{ backgroundImage: `url(${ps5Image})` }}>
                     <div className="flex flex-col justify-end h-full text-white bg-black bg-opacity-50 p-6 rounded-lg">
@@ -39,7 +39,7 @@ function ProductGrid() {
                             <div className="flex flex-col justify-end h-full text-white bg-black bg-opacity-50 p-6 rounded-lg">
                                 <h3 className="text-lg font-bold text-white">Perfume</h3>
                                 <p className="text-sm">GUCCI INTENSE OUD EDP.</p>
-                                <Link to="#" className="mt-2 inline-block px-4 py-2 text-white font-semibold rounded hover:bg-gray-200">Shop Now</Link>
+                                <Link to="/error" className="mt-2 inline-block px-4 py-2 text-white font-semibold rounded hover:bg-gray-200">Shop Now</Link>
                             </div>
                         </div>
                     </div>

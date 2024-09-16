@@ -4,7 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import (
     Product, Order, OrderItem, ShippingAddress, Review, Thumbnail,
     Variation, VariationType, Category, Brand, VariationValue,
-    Subcategory, SpecialOffer, ProductSpecification,Media
+    Subcategory, SpecialOffer, ProductSpecification, Media,Wishlist
 )
 
 class ProductSpecificationSerializer(serializers.ModelSerializer):
@@ -70,26 +70,40 @@ class SubcategorySerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     subcategories = SubcategorySerializer(many=True, read_only=True)
+    children = serializers.SerializerMethodField()
+    parent = serializers.StringRelatedField()
+    gender = serializers.CharField()  # Include gender
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'theme_color', 'image', 'subcategories']
+        fields = ['id', 'name', 'theme_color', 'image', 'subcategories', 'isMajorCategory', 'parent', 'children', 'gender','svg']
+
+    def get_children(self, obj):
+        children = obj.children.all()
+        return CategorySerializer(children, many=True).data
 
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = ['id', 'name']
+class SimpleProductSerializer(serializers.ModelSerializer):
+    reviews = serializers.SerializerMethodField(read_only=True)
+    categories = CategorySerializer(many=True, read_only=True)
+    class Meta:
+        model = Product
+        fields = ['_id', 'name', 'price', 'image','reviews','numReviews','rating','discount','new_price','categories']  # Only include the necessary fields
 
+    def get_reviews(self, obj):
+        reviews = obj.review_set.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return serializer.data
 class SpecialOfferSerializer(serializers.ModelSerializer):
-    products = serializers.SerializerMethodField()
+    products = SimpleProductSerializer(many=True, read_only=True)  # Use the simplified product serializer
 
     class Meta:
         model = SpecialOffer
-        fields = ['id', 'offer_type', 'start_date', 'end_date', 'products']
+        fields = ['id', 'offer_type', 'start_date', 'end_date', 'name', 'products']
 
-    def get_products(self, obj):
-        products = obj.products.all()
-        return ProductSerializer(products, many=True).data
 
 class ProductSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField(read_only=True)
@@ -98,8 +112,8 @@ class ProductSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
     subcategories = SubcategorySerializer(many=True, read_only=True)
     brands = BrandSerializer(many=True, read_only=True)
-    special_offers = SpecialOfferSerializer(many=True, read_only=True)
-    specifications = ProductSpecificationSerializer(many=True, read_only=True)  # Add this line
+    special_offers = serializers.SerializerMethodField()
+    specifications = ProductSpecificationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -108,6 +122,11 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         reviews = obj.review_set.all()
         serializer = ReviewSerializer(reviews, many=True)
+        return serializer.data
+
+    def get_special_offers(self, obj):
+        special_offers = obj.special_offers.all()
+        serializer = SpecialOfferSerializer(special_offers, many=True)
         return serializer.data
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
@@ -145,6 +164,7 @@ class OrderSerializer(serializers.ModelSerializer):
         user = obj.user
         serializer = UserSerializer(user, many=False)
         return serializer.data
+
 class MediaSerializer(serializers.ModelSerializer):
     products = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
@@ -166,3 +186,10 @@ class MediaSerializer(serializers.ModelSerializer):
 
     def get_special_offers(self, obj):
         return SpecialOfferSerializer(obj.special_offers.all(), many=True).data
+class WishlistSerializer(serializers.ModelSerializer):
+    products = ProductSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Wishlist
+        fields = ['id', 'user', 'products', 'createdAt']
+        read_only_fields = ['createdAt', 'user']

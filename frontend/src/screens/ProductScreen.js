@@ -13,6 +13,8 @@ import { ReactComponent as ArrowDown } from '../images/arrowdown.svg';
 import { ReactComponent as DeliveryIcon } from '../images/icon-delivery.svg';
 import { ReactComponent as ReturnIcon } from '../images/Icon-return.svg';
 import { addToCart, removeFromCart } from '../actions/cartActions';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 function ProductScreen({ match, history }) {
     const [qty, setQty] = useState(1);
@@ -124,7 +126,7 @@ function ProductScreen({ match, history }) {
                     {colors.map((color, index) => (
                         <button
                             key={index}
-                            className={`h-4 w-4 rounded-full ${selectedColor === color ? 'border-2 border-blue-500' : ''}`}
+                            className={`h-4 w-4 rounded-full border border-gray-700 ${selectedColor === color ? 'border-2 border-blue-500' : ''}`}
                             style={{ backgroundColor: color }}
                             onClick={() => handleColorClick(color)}
                         ></button>
@@ -174,14 +176,19 @@ function ProductScreen({ match, history }) {
 
     return (
         <div className=" mx-auto ">
-            <Link to='/' className='btn btn-light my-3'>
-                Go Back
-            </Link>
+           
             {loading ? (
                 <Loader />
             ) : error ? (
                 <Message variant='danger'>{error}</Message>
             ) : (
+               <div>
+                <Header/>
+               
+                <div className='w-[90%] mx-auto bg-white mt-4'>
+                <Link to='/' className='btn btn-light my-3'>
+                Go Back
+            </Link>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-4 rounded-md">
                     
                     {/* Images Section */}
@@ -280,7 +287,7 @@ function ProductScreen({ match, history }) {
                             <li>
                                 <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#FFAD33'} />
                             </li>
-                            <li className="text-xl">Price: ${product.price}</li>
+                            <li className="text-xl">Price: ₦{product.price}</li>
                             <li className="text-gray-700 pb-3 border-b border-gray-400">Description: {product.description}</li>
                             <div>
                                 {product?.variations?.Color && renderColorVariations(product?.variations?.Color)}
@@ -360,63 +367,12 @@ function ProductScreen({ match, history }) {
                         </ul>
                     </div>
                 </div>
+                </div>
+                <Footer/>
+               </div>
             )}
 
-            <div className="mt-8 bg-white p-4 rounded-md">
-                <h4 className="text-xl font-semibold">Reviews</h4>
-                {product.reviews.length === 0 && <Message variant='info'>No Reviews</Message>}
-                <ul className="space-y-4">
-                    {product.reviews.map((review) => (
-                        <li key={review._id} className="border-b pb-4">
-                            <strong>{review.name}</strong>
-                            <Rating value={review.rating} color='#f8e825' />
-                            <p>{review.createdAt.substring(0, 10)}</p>
-                            <p>{review.comment}</p>
-                        </li>
-                    ))}
-                    <li>
-                        <h4 className="text-lg font-semibold">Write a review</h4>
-                        {loadingProductReview && <Loader />}
-                        {successProductReview && <Message variant='success'>Review Submitted</Message>}
-                        {errorProductReview && <Message variant='danger'>{errorProductReview}</Message>}
-                        {userInfo ? (
-                            <form onSubmit={submitHandler}>
-                                <div className="mb-4">
-                                    <label htmlFor="rating">Rating</label>
-                                    <select
-                                        id="rating"
-                                        value={rating}
-                                        onChange={(e) => setRating(e.target.value)}
-                                        className="block w-full mt-1 p-2 border rounded"
-                                    >
-                                        <option value="">Select...</option>
-                                        <option value="1">1 - Poor</option>
-                                        <option value="2">2 - Fair</option>
-                                        <option value="3">3 - Good</option>
-                                        <option value="4">4 - Very Good</option>
-                                        <option value="5">5 - Excellent</option>
-                                    </select>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="comment">Comment</label>
-                                    <textarea
-                                        id="comment"
-                                        rows="3"
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                        className="block w-full mt-1 p-2 border rounded"
-                                    ></textarea>
-                                </div>
-                                <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded">
-                                    Submit
-                                </button>
-                            </form>
-                        ) : (
-                            <Message variant='info'>Please <Link to='/login'>sign in</Link> to write a review</Message>
-                        )}
-                    </li>
-                </ul>
-            </div>
+          
         </div>
     );
 }

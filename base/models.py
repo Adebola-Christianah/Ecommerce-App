@@ -21,13 +21,24 @@ class Media(models.Model):
 
 
 class Category(models.Model):
+    GENDER_CHOICES = [
+        ('men', "Men's"),
+        ('women', "Women's"),
+        ('unisex', "Unisex"),
+    ]
+
     name = models.CharField(max_length=200, unique=True)
+    svg = models.TextField(null=True, blank=True) 
     theme_color = models.CharField(max_length=7, null=True, blank=True)
     image = models.ImageField(upload_to='category_images/', null=True, blank=True)
     subcategories = models.ManyToManyField('Subcategory', related_name='parent_categories', blank=True)
+    isMajorCategory = models.BooleanField(default=False)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
 
     def __str__(self):
         return self.name
+
 
 
 class Brand(models.Model):
@@ -192,3 +203,13 @@ class ProductSpecification(models.Model):
 
     def __str__(self):
         return f'{self.title}: {self.value}'
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, related_name='wishlist', on_delete=models.CASCADE)
+    products = models.ManyToManyField('Product', related_name='wishlisted_by', blank=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Wishlist"
+
+    class Meta:
+        unique_together = ['user']

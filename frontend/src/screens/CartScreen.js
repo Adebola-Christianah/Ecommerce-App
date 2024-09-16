@@ -4,12 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Card } from 'react-bootstrap';
 import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../actions/cartActions';
-
+import ConfirmationModal from '../components/ConfirmationModal';
+import EmptyImage from '../images/empty_cart-removebg-preview.png'
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 function CartScreen({ history }) {
     const dispatch = useDispatch();
     const { cartItems } = useSelector(state => state.cart);
 
     const [quantityErrors, setQuantityErrors] = useState({});
+    const [showConfirm, setShowConfirm]= useState(false);
     const [couponCode, setCouponCode] = useState('');
     const [discount, setDiscount] = useState(0);
     const [showModal, setShowModal] = useState(null); // Store ID of the item to delete
@@ -58,17 +62,48 @@ function CartScreen({ history }) {
     const productToDelete = showModal !== null ? cartItems.find(item => item.product === showModal) : null;
 
     return (
-        <div className="px-6 mx-auto mt-6 bg-white rounded-lg">
+        <div className="">
             <div className="flex flex-col md:flex-row">
                 <div className="w-full">
-                    <h1 className="text-2xl mb-4">Shopping Cart</h1>
+                    
                     {cartItems.length === 0 ? (
-                        <Message variant="info">
-                            Your cart is empty <Link to="/">Go Back</Link>
-                        </Message>
+                         <div className="bg-white w-full h-screen flex items-center justify-center">
+      <div className="text-center  bg-white rounded-lg">
+        {/* Image section */}
+        <div className="flex justify-center">
+          <img
+            src={EmptyImage} // Replace with the actual path to the image
+            alt="No results found"
+            className="w-[28rem] h-auto object-contain "
+          />
+        </div>
+
+        {/* Title */}
+        <h1 className="text-lg md:text-3xl font-bold text-red-600 ">
+          Your cart is empty
+        </h1>
+
+        {/* Description */}
+        <p className="text-gray-600 mb-6">
+          Looks like you have not made your choice yet
+        </p>
+
+        {/* Button */}
+        <Link
+          to='/'
+          className="bg-red-600 text-white px-6 py-3 rounded-lg shadow hover:bg-red-700 transition"
+        >
+          Start Shopping
+        </Link>
+      </div>
+    </div>
                     ) : (
                         <>
-                            <div className="overflow-x-auto">
+                        <Header/>
+                        
+                           <div className='bg-white w-[95%] mx-auto py-6 mt-4'>
+                           <div className="overflow-x-auto px-6 mx-auto  bg-white rounded-lg">
+                            <h1 className="text-2xl mb-4 mx-4">Shopping Cart</h1>
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead>
                                         <tr>
@@ -87,7 +122,7 @@ function CartScreen({ history }) {
                                                         {item.name}
                                                     </Link>
                                                 </td>
-                                                <td className="pl-12 md:pl-0 md:px-4 py-2">${item.price}</td>
+                                                <td className="pl-12 md:pl-0 md:px-4 py-2">₦{item.price}</td>
                                                 <td className="px-4 py-2">
                                                     <select
                                                         className="form-select block p-2 border-gray-400 rounded-md border focus:outline-none focus:border-blue-500 sm:text-sm"
@@ -118,11 +153,7 @@ function CartScreen({ history }) {
                                     </tbody>
                                 </table>
                             </div>
-                        </>
-                    )}
-                    {cartItems.length > 0 && (
-                        <>
-                            <div className="flex justify-between mt-4">
+                            <div className="flex justify-between mt-4 px-4">
                                 <button
                                     className="text-black px-4 py-2 rounded mb-4 md:mb-0 border border-gray-400"
                                     onClick={() => history.push('/')}
@@ -136,7 +167,7 @@ function CartScreen({ history }) {
                                     Update Cart
                                 </button>
                             </div>
-                            <div className="flex flex-col md:flex-row justify-between mt-0 lg:mt-24 ">
+                            <div className="flex flex-col md:flex-row justify-between mt-0 lg:mt-24 px-4">
                                 <div className="flex">
                                     <input
                                         type="text"
@@ -171,7 +202,7 @@ function CartScreen({ history }) {
                                             <div className="flex justify-between mt-2 font-bold">
                                                 <span>Total:</span>
                                                 <span>
-                                                    ${(cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * (1 - discount / 100)).toFixed(2)}
+                                                ₦{(cartItems.reduce((acc, item) => acc + item.qty * item.price, 0) * (1 - discount / 100)).toFixed(2)}
                                                 </span>
                                             </div>
                                         </li>
@@ -188,35 +219,26 @@ function CartScreen({ history }) {
                                     </ul>
                                 </Card>
                             </div>
+                           </div>
                         </>
                     )}
+                  
+                           
+                            <Footer/>
+                     
                 </div>
             </div>
 
             {/* Modal for confirming deletion */}
             {showModal !== null && productToDelete && (
-                <div id="deleteModal" className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
-                    <div className="bg-white rounded-lg p-6">
-                        <h2 className="text-xl mb-4 flex items-center justify-center">
-                            Confirm Deletion
-                        </h2>
-                        <p>Are you sure you want to delete <span className='font-[800] text-base'>{productToDelete.name}</span>?</p>
-                        <div className="flex justify-center mt-4">
-                            <button 
-                                className="py-2 px-4 bg-gray-300 rounded mr-2"
-                                onClick={closeModal}
-                            >
-                                No, cancel
-                            </button>
-                            <button 
-                                className="py-2 px-4 bg-red-600 text-white rounded"
-                                onClick={() => removeFromCartHandler(productToDelete.product)}
-                            >
-                                Yes, I'm sure
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <ConfirmationModal 
+            message='Confirm Deletion'
+            subMessage={`Are you sure you want to delete <strong>${productToDelete.name}</strong>?`}
+            onAction={() => removeFromCartHandler(productToDelete.product)}
+            onCancel={() => setShowModal(null)}
+            actionText='Delete'
+          />
+          
             )}
         </div>
     );

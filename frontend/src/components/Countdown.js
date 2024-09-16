@@ -56,7 +56,7 @@ const Countdown = ({ end_date }) => {
     }, [end_date]);
 
     return (
-        <div className='flex md:flex-row flex-col my-2 md:my-4 md:gap-24 text-black items-center'>
+        <div className='flex md:flex-row flex-col my-2 md:my-4 md:gap-24 text-black items-center justify-center'>
             <h2 className=''>Offer Ends In:</h2>
             <div className='flex space text-center items-center font-bold '>
                 <div className='flex flex-col items-center'>

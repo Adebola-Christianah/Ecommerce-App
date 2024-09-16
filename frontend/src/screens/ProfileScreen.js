@@ -8,7 +8,8 @@ import Message from '../components/Message'
 import { getUserDetails, updateUserProfile } from '../actions/userActions'
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 import { listMyOrders } from '../actions/orderActions'
-
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 function ProfileScreen({ history }) {
 
     const [name, setName] = useState('')
@@ -64,13 +65,17 @@ function ProfileScreen({ history }) {
 
     }
     return (
-        <Row>
-            <Col md={3}>
-                <h2>User Profile</h2>
-
-                {message && <Message variant='danger'>{message}</Message>}
+    <div className='bg-slate-100'>
+        {message && <Message variant='danger'>{message}</Message>}
                 {error && <Message variant='danger'>{error}</Message>}
                 {loading && <Loader />}
+            <Header/>
+            <div className='px-2 md:px-8 mt-2 md:mt-4 bg-slate-100 '>
+          <div className='flex flex-col md:flex-row gap-3'>
+            <div className='w-full md:w-[25%] bg-white p-4'>
+                <h2>User Profile</h2>
+
+                
                 <Form onSubmit={submitHandler}>
 
                     <Form.Group controlId='name'>
@@ -126,16 +131,16 @@ function ProfileScreen({ history }) {
                 </Button>
 
                 </Form>
-            </Col>
+            </div>
 
-            <Col md={9}>
+            <div className='bg-white w-full md:w-[75%] p-4'>
                 <h2>My Orders</h2>
                 {loadingOrders ? (
                     <Loader />
                 ) : errorOrders ? (
                     <Message variant='danger'>{errorOrders}</Message>
                 ) : (
-                            <Table striped responsive className='table-sm'>
+                            <Table striped responsive className='table-sm w-full'>
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -148,11 +153,11 @@ function ProfileScreen({ history }) {
                                 </thead>
 
                                 <tbody>
-                                    {orders.map(order => (
+                                    {orders.reverse().map(order => (
                                         <tr key={order._id}>
                                             <td>{order._id}</td>
                                             <td>{order.createdAt.substring(0, 10)}</td>
-                                            <td>${order.totalPrice}</td>
+                                            <td>₦{order.totalPrice}</td>
                                             <td>{order.isPaid ? order.paidAt.substring(0, 10) : (
                                                 <i className='fas fa-times' style={{ color: 'red' }}></i>
                                             )}</td>
@@ -166,8 +171,11 @@ function ProfileScreen({ history }) {
                                 </tbody>
                             </Table>
                         )}
-            </Col>
-        </Row>
+            </div>
+        </div>
+      </div>
+            <Footer/>
+    </div>
     )
 }
 

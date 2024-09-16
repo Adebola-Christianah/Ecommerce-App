@@ -4,23 +4,64 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import status
-
+from django.db.models import Q
 from base.models import (
     Product, Review, Thumbnail, Variation,
     Category, Brand, Subcategory, ShippingAddress,
-    SpecialOffer,Media
+    SpecialOffer,Media,Order,Wishlist
 )
 from base.serializers import (
     ProductSerializer, ReviewSerializer, ThumbnailSerializer,
     VariationSerializer, CategorySerializer, BrandSerializer,
     SubcategorySerializer, ShippingAddressSerializer,
-    SpecialOfferSerializer,MediaSerializer
+    SpecialOfferSerializer,MediaSerializer,WishlistSerializer
 )
 
 @api_view(['GET'])
 def getProducts(request):
     query = request.query_params.get('keyword', '')
-    products = Product.objects.filter(name__icontains=query).order_by('-createdAt')
+
+    if query:
+        # Search products by name
+        product_queryset = Product.objects.filter(name__icontains=query).order_by('-createdAt')
+        products = Product.objects.filter(name__icontains=query).order_by('-createdAt')
+        # Search for categories and subcategories
+        category_queryset = Category.objects.filter(
+            Q(name__icontains=query) | Q(subcategories__name__icontains=query)
+        )
+        
+        # Get all IDs of matched categories and subcategories
+        category_ids = category_queryset.values_list('id', flat=True)
+        
+        # Get products for matched categories and subcategories
+        if category_ids:
+            product_queryset = product_queryset | Product.objects.filter(categories__in=category_ids)
+        
+        # Remove duplicates
+        products = product_queryset.distinct().order_by('-createdAt')
+    else:
+        # If no keyword is provided, get all products
+        products = Product.objects.all().order_by('-createdAt')
+
+    # Pagination logic
+    page = request.query_params.get('page', 1)
+    paginator = Paginator(products, 10)
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    page = int(page)
+
+    # Serialize products
+    serializer = ProductSerializer(products, many=True)
+
+    return Response({'products': serializer.data, 'page': page, 'pages': paginator.num_pages})
+    query = request.query_params.get('keyword', '')
+   
 
     page = request.query_params.get('page', 1)
     paginator = Paginator(products, 10)
@@ -143,39 +184,55 @@ def uploadImage(request):
 @permission_classes([IsAuthenticated])
 def createProductReview(request, pk):
     user = request.user
+    
     try:
+        # Fetch the product
         product = Product.objects.get(_id=pk)
     except Product.DoesNotExist:
         return Response({'detail': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
     data = request.data
 
+    # Check if the user has purchased the product
+    has_purchased = Order.objects.filter(
+        user=user,
+        isPaid=True,
+        orderitem__product=product
+    ).exists()
+
+    if not has_purchased:
+        return Response({'detail': 'You can only review products you have purchased'}, status=status.HTTP_400_BAD_REQUEST)
+
     # Check if review already exists
     if product.review_set.filter(user=user).exists():
-        return Response({'detail': 'Product already reviewed'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'You have already reviewed this product'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Validate rating
-    if data.get('rating') == 0:
-        return Response({'detail': 'Please select a rating'}, status=status.HTTP_400_BAD_REQUEST)
+    rating = int(data.get('rating'))
+    if rating is None or rating <= 0:
+        return Response({'detail': 'Please select a valid rating between 1 and 5'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Create review
-    review = Review.objects.create(
-        user=user,
-        product=product,
-        name=user.first_name,
-        rating=data['rating'],
-        comment=data.get('comment', ''),
-    )
+    try:
+        review = Review.objects.create(
+            user=user,
+            product=product,
+            name=user.first_name,
+            rating=rating,
+            comment=data.get('comment', ''),
+        )
+    except Exception as e:
+        return Response({'detail': 'An error occurred while creating the review. Please try again.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    # Update product ratings
     reviews = product.review_set.all()
-    product.numReviews = len(reviews)
+    product.numReviews = reviews.count()
 
     total = sum([r.rating for r in reviews])
     product.rating = total / len(reviews) if reviews else 0
     product.save()
 
-    return Response('Review Added')
-
+    return Response({'detail': 'Review added successfully'}, status=status.HTTP_201_CREATED)
 @api_view(['GET', 'PUT', 'DELETE'])
 def shipping_address_detail(request, pk):
     try:
@@ -200,9 +257,15 @@ def shipping_address_detail(request, pk):
 
 @api_view(['GET'])
 def getCategories(request):
-    categories = Category.objects.all()
+    gender = request.query_params.get('gender', None)
+    categories = Category.objects.filter(isMajorCategory=True)
+    
+    if gender:
+        categories = categories.filter(gender=gender)
+        
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def getSubcategories(request):
@@ -222,10 +285,13 @@ def getCategory(request, pk):
 
 @api_view(['GET'])
 def getSubcategory(request, pk):
+    
     try:
         subcategory = Subcategory.objects.get(id=pk)
+        print(subcategory)
     except Subcategory.DoesNotExist:
         return Response({'detail': 'Subcategory not found'}, status=status.HTTP_404_NOT_FOUND)
+        
 
     serializer = SubcategorySerializer(subcategory, many=False)
     return Response(serializer.data)
@@ -270,8 +336,37 @@ def getProductsByCategory(request, category_id):
     except Category.DoesNotExist:
         return Response({'detail': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Get products associated with the category
-    products = Product.objects.filter(categories=category)
+    # Get child categories of the selected category
+    child_categories = Category.objects.filter(parent=category)
+
+    # Get products for both the main category and its child categories
+    products = Product.objects.filter(categories__in=[category, *child_categories]).distinct()
+
+    # Serialize the products
     serializer = ProductSerializer(products, many=True)
 
     return Response(serializer.data)
+
+@api_view(['GET'])
+def get_wishlist(request):
+    wishlist = Wishlist.objects.filter(user=request.user).order_by('-createdAt')
+    serializer = WishlistSerializer(wishlist, many=True)
+    return Response(serializer.data)
+
+# Add an item to the wishlist
+@api_view(['POST'])
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+
+    if created:
+        return Response({'message': 'Item added to wishlist'}, status=status.HTTP_201_CREATED)
+    else:
+        return Response({'message': 'Item already in wishlist'}, status=status.HTTP_200_OK)
+
+# Remove an item from the wishlist
+@api_view(['DELETE'])
+def remove_from_wishlist(request, product_id):
+    wishlist_item = get_object_or_404(Wishlist, user=request.user, product_id=product_id)
+    wishlist_item.delete()
+    return Response({'message': 'Item removed from wishlist'}, status=status.HTTP_204_NO_CONTENT)

@@ -10,26 +10,29 @@ function SearchBox() {
     let history = useHistory()
 
     const submitHandler = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         if (keyword) {
-            history.push(`/?keyword=${keyword}&page=1`)
+            history.push(`/products?keyword=${keyword}&page=1`);
+            setKeyword('')
         } else {
-            history.push(history.push(history.location.pathname))
+            history.push('/');
         }
-    }
+    };
+    
     return (
-        <form onSubmit={submitHandler} inline  className='flex'>
+        <form  inline  className='flex'>
             <Button className='all-button' type='button'>All<Dropdown/></Button> 
             <input
-                type='text'
+                type='text '
                 name='q'
                 onChange={(e) => setKeyword(e.target.value)}
-                className='w-full'
+                className='w-full bg-red-400'
             />
 
             <button
                 type='submit'
                 className='second-button'
+                onClick={submitHandler}
             >
                 <Search/>
             </button>

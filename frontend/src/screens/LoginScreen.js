@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Loader from '../components/Loader';
+import AuthSpinner from '../components/AuthSpinner';
 import Message from '../components/Message';
 import { login } from '../actions/userActions';
 import IMAGE from '../images/dl.beatsnoop 1.png';
@@ -50,7 +50,7 @@ function LoginScreen({ location, history }) {
                     </p>
 
                     {error && <Message variant="danger">{error}</Message>}
-                    {loading && <Loader />}
+                   
 
                     <form onSubmit={submitHandler}>
                         <div className="mb-4">
@@ -91,18 +91,23 @@ function LoginScreen({ location, history }) {
                         </div>
                         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                             <button
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring w-full md:w-auto"
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring w-full flex items-center justify-center"
                                 type="submit"
                             >
-                                Log in
+                               {loading && <AuthSpinner />} <span>{loading ? '' : 'Log In'}</span>
                             </button>
-                            <Link
+                           
+                        </div>
+                        <div className='flex justify-between mb-3'>
+                            <span>Forgot Password?</span>
+                        <Link
                                 className="inline-block align-baseline font-bold text-sm text-red-500 hover:text-red-700  md:mt-0"
                                 to="/forgot-password"
                             >
-                                Forgot Password?
+                                Reset?
                             </Link>
                         </div>
+                        
                         <div className="text-center text-sm text-gray-600">
                             New Customer?{' '}
                             <Link

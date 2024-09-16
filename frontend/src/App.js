@@ -19,6 +19,10 @@ import ProductEditScreen from './screens/ProductEditScreen';
 import OrderListScreen from './screens/OrderListScreen';
 import SubcategoryScreen from './screens/SubCtegoryScreen';
 import CategoryScreen from './screens/CategoryScreen';
+import SearchResult from './screens/SearchResult';
+import NotFound from './components/ErrorPage';
+import WishlistPage from './screens/wishList';
+import ComingSoon from './screens/Coming';
 
 // Define AuthLayout and MainLayout
 const AuthLayout = ({ children }) => (
@@ -30,11 +34,10 @@ const AuthLayout = ({ children }) => (
 
 const MainLayout = ({ children }) => (
     <div className="min-h-screen flex flex-col bg-gray-100">
-        <Header />
-        <main className="flex-grow">
+        {/* <Header /> */}
+     
             {children}
-        </main>
-        <Footer />
+        {/* <Footer /> */}
     </div>
 );
 
@@ -44,6 +47,7 @@ function App() {
       <Switch>
         {/* Auth Layout Routes */}
         <Route path={['/login', '/register', '/profile']}>
+        
           <AuthLayout>
             <Route path='/login' component={LoginScreen} />
             <Route path='/register' component={RegisterScreen} />
@@ -69,7 +73,8 @@ function App() {
         ]}>
           <MainLayout>
             <Route path='/' component={HomeScreen} exact />
-            <div className='w-[95%] mx-auto '>
+            <Route path='/error' component={NotFound} />
+            <Route path='/products' component={SearchResult} exact />
             <Route path='/product/:id' component={ProductScreen} />
             <Route path='/cart/:id?' component={CartScreen} />
             <Route path='/shipping' component={ShippingScreen} />
@@ -82,7 +87,9 @@ function App() {
             <Route path='/admin/orderlist' component={OrderListScreen} />
             <Route path='/category/:id' component={CategoryScreen} />
             <Route path='/subcategory/:id' component={SubcategoryScreen} />
-            </div>
+            <Route path='/wishlist' component={WishlistPage} />
+            <Route path='/coming-soon' component={ComingSoon} />
+
           </MainLayout>
         </Route>
       </Switch>

@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Product, Thumbnail, VariationType, Variation, VariationValue,
     Category, Brand, Review, Order, OrderItem, ShippingAddress,
-    Subcategory, SpecialOffer, ProductSpecification, Media
+    Subcategory, SpecialOffer, ProductSpecification, Media, Wishlist
 )
 from django.utils.html import format_html
 
@@ -21,9 +21,10 @@ class VariationInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'theme_color', 'image_tag')
+    list_display = ('name', 'theme_color', 'image_tag', 'isMajorCategory', 'parent', 'gender')
     search_fields = ('name',)
     filter_horizontal = ('subcategories',)
+    list_filter = ('isMajorCategory', 'parent', 'gender')  # Add gender filter
 
     def image_tag(self, obj):
         if obj.image:
@@ -62,14 +63,14 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(SpecialOffer)
 class SpecialOfferAdmin(admin.ModelAdmin):
-    list_display = ('offer_type', 'start_date', 'end_date', 'media_img_tag')
+    list_display = ('offer_type', 'start_date', 'end_date')
     search_fields = ('offer_type',)
 
-    def media_img_tag(self, obj):
-        if obj.media_img:
-            return format_html('<img src="{}" width="100" height="100" />', obj.media_img.url)
-        return 'No image'
-    media_img_tag.short_description = 'Media Image'
+    # def media_img_tag(self, obj):
+    #     if obj.media_img:
+    #         return format_html('<img src="{}" width="100" height="100" />', obj.media_img.url)
+    #     return 'No image'
+    # media_img_tag.short_description = 'Media Image'
 
 @admin.register(VariationType)
 class VariationTypeAdmin(admin.ModelAdmin):
@@ -119,3 +120,9 @@ class MediaAdmin(admin.ModelAdmin):
             return format_html('<img src="{}" width="100" height="100" />', obj.img.url)
         return 'No image'
     img_tag.short_description = 'Image'
+class WishlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'createdAt')  # Display these fields in the list view
+    search_fields = ('user__username', )  # Allow search by username
+    filter_horizontal = ('products', )  # Add a filter widget for the many-to-many field
+
+admin.site.register(Wishlist, WishlistAdmin)

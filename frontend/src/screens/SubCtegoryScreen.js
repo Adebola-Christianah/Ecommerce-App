@@ -4,6 +4,8 @@ import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { listProductsBySubcategory } from '../actions/productActions';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const SubcategoryScreen = ({ match }) => {
     const subcategoryId = match.params.id;
@@ -21,14 +23,18 @@ const SubcategoryScreen = ({ match }) => {
     console.log('Error:', error);
 
     return (
-        <div className="md:container mx-auto">
-            <h1 className="text-2xl font-bold my-4">{products[0]?.subcategories[0]?.name}</h1>
+        <div >
+            
             {loading ? (
                 <Loader />
             ) : error ? (
                 <Message variant="danger">{error}</Message>
             ) : (
                 <>
+              <div>
+                <Header/>
+                <div className='w-[95%] mx-auto mt-4'>
+                <h1 className="text-2xl font-bold my-4">{products[0]?.subcategories[0]?.name}</h1>
                     {products.length > 0 ? (
                         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {products.map((product) => (
@@ -80,6 +86,9 @@ const SubcategoryScreen = ({ match }) => {
                         </div>
                         </div>
                     )}
+                </div>
+                <Footer/>
+              </div>
                 </>
             )}
         </div>
