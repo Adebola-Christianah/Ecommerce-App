@@ -152,3 +152,4 @@ __pycache__/
 venv/
 .vercel
 >>>>>>> master
+.env*.local
