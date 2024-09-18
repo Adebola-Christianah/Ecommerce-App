@@ -3,7 +3,7 @@ asgiref==3.8.1
 astroid==3.2.2
 autopep8==2.3.1
 blinker==1.8.2
-
+boto3==1.34.142
 botocore==1.34.142
 cachelib==0.13.0
 certifi==2024.7.4
@@ -48,7 +48,7 @@ pycodestyle==2.12.0
 PyJWT==2.8.0
 pylint==3.2.5
 python-dateutil==2.9.0.post0
-
+python-dotenv==1.0.1
 pytz==2024.1
 requests==2.32.3
 s3transfer==0.10.2

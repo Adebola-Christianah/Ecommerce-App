@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Exit on any error
+set -e
+
 # Ensure pip is installed
 apt-get update && apt-get install -y python3-pip
 
