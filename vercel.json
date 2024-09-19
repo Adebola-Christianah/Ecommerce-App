@@ -2,10 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/wsgi.py",
+      "src": "build_files.sh",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }
+ 
   ],
   "routes": [
     {
@@ -16,5 +17,6 @@
       "src": "/(.*)",
       "dest": "backend/wsgi.py"
     }
-  ]
+  ],
+  "outputDirectory": "ui/staticfiles"
 }
