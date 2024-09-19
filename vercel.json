@@ -18,5 +18,5 @@
       "dest": "backend/wsgi.py"
     }
   ],
-  "outputDirectory": "ui/staticfiles"
+  "outputDirectory": "/staticfiles"
 }
