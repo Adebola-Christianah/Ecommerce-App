@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','.vercel.app','now.sh']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','.vercel.app','now.sh','ecommerce-app-m5jq.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
