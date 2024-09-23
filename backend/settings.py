@@ -104,11 +104,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 #         "PORT": os.environ.get("DB_PORT"),
 #     }
 # }
+import dj_database_url
+
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL')
     )
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
