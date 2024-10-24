@@ -160,4 +160,3 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('API_SECRET')
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-# pg_dump -h dpg-crpkgolsvqrc738s734g-a -U myshop_hxbs_user -d myshop_hxbs_user --data-only --format=c --file=database.dump
